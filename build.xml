@@ -1,0 +1,64 @@
+<project name="SeQLParser"  default="build"  basedir=".">
+	<property environment="env"/>
+	<echo message="JAVA_HOME ${env.JAVA_HOME}"/>
+
+	<property name="project.name" value="AntTask"/>
+	<property name="PROJECT" value="${basedir}" />
+	<property name="build.dir" value="${PROJECT}/bin"/>
+	<property name="dist.dir" value="${PROJECT}/deploy"/>
+	<property name="src.dir" value="${PROJECT}/src"/>
+	<property name="deploy.name" value="SeQLParser"/>
+	<property name="deploy.dir" value="${PROJECT}/deploy"/>
+	<property name="lib" value="${PROJECT}/lib"/>
+
+	<path id="classpath">
+		<fileset dir="${lib}"/>
+	</path>
+
+	<path id="project.classpath">
+		<fileset dir="${PROJECT}/lib" includes="**/*.jar" />
+	</path>
+
+	<target name="init">
+		<echo message="init... start" />
+		<mkdir dir="${build.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+		<echo message="init... end" />
+	</target>
+
+	<target name="build" depends="init">
+		<javac includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" includes="**/*.java" debug="true" failonerror="true">
+			<classpath refid="project.classpath" />
+		</javac>
+	</target>
+
+	<target name="clean">
+		<echo message="Cleaning ${build.dir}" />
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="deploy" depends="build">
+		<copy todir="${build.dir}">
+			<fileset dir="${basedir}/src">
+				<include name="version.info" />
+			</fileset>
+		</copy>
+
+		<echo message="create jar file : ${dist.dir}/${deploy.name}-v1.x.jar" />
+		<jar jarfile="${dist.dir}/${deploy.name}-v1.x.jar" update="true">
+			<fileset dir="${build.dir}">
+				<include name="**/*.*"/>
+				<exclude name="**/*.g4"/>
+				<exclude name="**/examples/*.*"/>
+				<exclude name="**/SeQLRunner.class"/>
+			</fileset>
+		</jar>
+
+		<copy todir="${deploy.dir}/lib">
+			<fileset dir="${basedir}/lib">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+
+</project>
