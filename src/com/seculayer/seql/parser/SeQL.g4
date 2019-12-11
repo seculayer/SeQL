@@ -5,7 +5,28 @@ mainQ
 	;
 
 pipe_query
-	: (search=pipe_search_group|join=join_clause) proc=pipe_proc_group?
+	: ds=ds_query proc=pipe_proc_group?
+	;
+	
+ds_query
+	:
+	search=pipe_search_group	#dsSearch
+	| file=ds_file				#dsFile
+	| rdb=ds_rdb				#dsRdb
+	| join=join_clause			#dsJoin
+	| json=json_file			#dsJson
+	;
+ds_file
+	:
+	FILE_PHRASE
+	;
+ds_rdb
+	:
+	RDB_PHRASE
+	;
+json_file
+	:
+	JSON_FILE (DQUOTE_PHRASE|SQUOTE_PHRASE)
 	;
 
 join_clause
@@ -411,6 +432,8 @@ fragment TERM_START_CHAR
         )
    | ESC_CHAR );
 
+FILE_ID : FILE DOT ID;
+RDB_ID  : RDB DOT ID;
 DOT		: '.';
 PIPE    : '|';
 SQUOTE  : '\'';
@@ -445,6 +468,10 @@ FROM    : 'FROM';
 GROUP   : 'GROUP';
 BY      : 'BY';
 FIELDS  : 'FIELDS';
+JSON_FILE    : 'JSON' WS FILE;
+FILE    : 'FILE';
+RDB     : 'RDB';
+LOCAL   : 'LOCAL';
 SORT    : 'SORT';
 TOP     : 'TOP';
 BOTTOM  : 'BOTTOM';
@@ -497,6 +524,12 @@ DQUOTE_PHRASE
 	;
 SQUOTE_PHRASE
 	: SQUOTE (ESC_CHAR|~('\''|'\\'))+ SQUOTE
+	;
+FILE_PHRASE
+	: FILE DOT ID WS* LBRACK WS* '*:*' WS* RBRACK
+	;
+RDB_PHRASE
+	: RDB DOT ID WS* LBRACK (ESC_CHAR|~('['|']'|'\\'))+ RBRACK
 	;
 //APOSTRO_PHRASE
 //	: APOSTRO (ESC_CHAR|~('`'|'\\'))+ APOSTRO
