@@ -17,7 +17,7 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.http.conn.HttpHostConnectException;
+//import org.apache.http.conn.HttpHostConnectException;
 
 public class HttpClientAdapter {
 
@@ -300,8 +300,8 @@ public class HttpClientAdapter {
 			he.printStackTrace();
 			if (he instanceof SocketTimeoutException) {
 				System.out.println(">>> Delay, SocketTimeoutException");
-			} else if (he instanceof HttpHostConnectException) {
-				System.out.println(">>> Cut-Off, HttpHostConnectException");
+//			} else if (he instanceof HttpHostConnectException) {
+//				System.out.println(">>> Cut-Off, HttpHostConnectException");
 			} else if (he instanceof UnknownHostException) {
 				System.out.println(">>> Cut-Off, UnknownHostException");
 			} else {
