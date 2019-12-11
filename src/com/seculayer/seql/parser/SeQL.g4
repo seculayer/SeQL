@@ -109,8 +109,8 @@ pipe_proc
     | pipe_proc_limit
     | pipe_proc_head_tail
     | pipe_output_print
-//    | pipe_output_file
-//    | pipe_output_db
+    | pipe_output_file
+    | pipe_output_db
     ;
 //--------------------------
 // Statistic statement
@@ -206,15 +206,6 @@ filter_logical :
 	| left=eval_expr inNot=in_notin LPAREN exprs=expr_list RPAREN	#filterInClause
     | left=eval_expr												#filterSingle
 	;
-//pipe_filter_single :
-//	left=eval_expr fOper=filter_oper right=eval_expr
-//	;
-//proc_filter_in_join :
-//	left=eval_expr inNot=in_notin LBRACK query=pipe_query RBRACK
-//	;
-//proc_filter_in_clause :
-//	left=eval_expr inNot=in_notin LPAREN exprs=expr_list RPAREN
-//	;
 expr_list :
 	eval_expr (COMMA eval_expr)*
 	;
@@ -246,13 +237,17 @@ pipe_proc_head_tail
 pipe_output_print
 	: PRINT alias_name (COMMA alias_name)*
 	;
-//pipe_output_file
-//	: (TOJSON|TOCSV) (DQUOTE_PHRASE|SQUOTE_PHRASE)
-//	;
-//pipe_output_db
-//	: TODB ID DOT ID
-//	;
-
+pipe_output_file
+	: ftype=file_type (dquot=DQUOTE_PHRASE|squot=SQUOTE_PHRASE) sep=SEPARATOR_PHRASE? ('HEADER' '=' useHdr=BOOL)?
+	| ftype=file_type (dquot=DQUOTE_PHRASE|squot=SQUOTE_PHRASE) ('HEADER' '=' useHdr=BOOL)? sep=SEPARATOR_PHRASE? 
+	;
+file_type :
+	(TOJSON|TOCSV|TOFILE)
+	;
+pipe_output_db :
+	type1=SAVE_DB
+	| type2=SAVE_DB_QUERY
+	;
 
 
 /* ================================================================
@@ -488,22 +483,22 @@ AS      : 'AS';
 PRINT   : 'PRINT';
 TOJSON  : 'TOJSON';
 TOCSV   : 'TOCSV';
+TOFILE  : 'TOFILE';
 TODB    : 'TODB';
 TO      : 'TO';
 NULL    : 'NULL';
+SEPARATOR : 'SEPARATOR';
 
 JOIN_TYPE 
-	: 'INNER' WS+ 'JOIN'
-	| 'OUTER' WS+ 'JOIN'
+	: 'INNER' WS 'JOIN'
+	| 'OUTER' WS 'JOIN'
 	;
 JOIN_DIRECTION	: ('LEFT'|'RIGHT'|'FULL');
-UNION_TYPE		: 'UNION' (WS+ 'ALL')?;
-BOOL			: ('true'|'false');
+UNION_TYPE		: 'UNION' (WS 'ALL')?;
+BOOL			: ('true'|'false'|'TRUE'|'FALSE');
 TIME_TYPE 		: ('SECOND'|'MINUTE'|'HOUR'|'DAY'|'MONTH'|'YEAR');
 OPER			: (EQ | NEQ | LESS | LESS_EQ | GREATER | GREATER_EQ);
-//LOGC_OPER		: (IS NOT NULL | IS NULL | LIKE | NOT LIKE);
 CALC			: (PLUS | MINUS | STAR | SLASH | PER);
-//IN_NOTIN		: (IN|NOT IN);
 NUMBER
 	: MINUS? INT+ (DOT INT+)?
 	;
@@ -518,12 +513,24 @@ GROUP_FUNC :
 	| 'GROUP_CONCAT' 
 	| 'STDEV' 
 	;
-ID				: (APOSTRO ID APOSTRO | ID_CHAR+);
+ID	:
+	APOSTRO ID APOSTRO 
+	| (ID_CHAR|DOT)+
+	;
 DQUOTE_PHRASE 
 	: DQUOTE (ESC_CHAR|~('"'|'\\'))+ DQUOTE
 	;
 SQUOTE_PHRASE
 	: SQUOTE (ESC_CHAR|~('\''|'\\'))+ SQUOTE
+	;
+SAVE_DB_QUERY :
+	TODB WS 'dbId' WS? EQ WS? ID WS 'queryStr' WS? EQ WS? LBRACK (ESC_CHAR|~('['|']'|'\\'))+ RBRACK
+	;
+SAVE_DB :
+	TODB WS 'dbId' WS? EQ WS? ID WS 'tableName' WS? EQ WS? ID
+	;
+SEPARATOR_PHRASE :
+	SEPARATOR WS* EQ WS* DQUOTE_PHRASE
 	;
 FILE_PHRASE
 	: FILE DOT ID WS* LBRACK WS* '*:*' WS* RBRACK
@@ -531,9 +538,6 @@ FILE_PHRASE
 RDB_PHRASE
 	: RDB DOT ID WS* LBRACK (ESC_CHAR|~('['|']'|'\\'))+ RBRACK
 	;
-//APOSTRO_PHRASE
-//	: APOSTRO (ESC_CHAR|~('`'|'\\'))+ APOSTRO
-//	;
 REGEX
 	: SLASH (ESC_CHAR|~('/'|'\\'))+ SLASH
 	;
