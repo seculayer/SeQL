@@ -619,7 +619,7 @@ FILE.4[
 ]
 | STATS COUNT(*) AS cnt, DC(dstn_port) AS dcnt  BY src_ip, prtc
 # Using REGEXP 
-| WHERE src_ip REGEXP '192\.168\..+\.[1-9][0-9]{0,2}'
+| WHERE src_ip REGEXP '192\.168\..+\.'
 | HEAD 3
 | PRINT dcnt, src_ip
 
