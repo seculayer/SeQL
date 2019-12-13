@@ -1,4 +1,4 @@
-# SeQL(Seculayer Query Language)
+SeQL(Seculayer Query Language)
 --------------------------------------------------------------------------------
 
 ## 1. Overview
