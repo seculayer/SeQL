@@ -110,7 +110,7 @@ The data processing step generates statistics on the retrieved data, or performs
 | SORT cnt DESC</code></pre>
 	
 #### [ Description ]
-<pre><code>- STATS AGGREGATE FUNCTION BY GROUP FIELD : Statistics statement for Group By. Aggregate functions such as COUNT, MAX, MIN, SUM, AVG, DC, VALUES and GROUP_CONTACT can be used.
+<pre><code>- STATS [AGGREGATE_FUNCTION] BY [GROUP_FIELD] : Statistics statement for Group By. Aggregate functions such as COUNT, MAX, MIN, SUM, AVG, DC, VALUES and GROUP_CONTACT can be used.
 - WHERE : A reserved word for filtering statement. Comparison operators such as >, >=, !=, =, <, <=, IS NULL, IS NOT NULL, LIKE and NOT LIKE can be used. 
 - CONVERT : A reserved word for data conversion statement. Built-in functions such as numbers, characters, logic, dates and data type can be used. 
 - SORT : A reserved word for sorting statement, such as ASC(ascending order) and DESC(descending order).</code></pre>
@@ -129,7 +129,8 @@ Data Output Printing after Data Search and Processing are conducted.
 - TO CSV : A reserved word for saving the query result as a CSV file.</code></pre>
 
 ### 3.4  Other Rules 
-SeQL consists of the structure of Data Search -> Data Processing-> Data Output Printing. SeQL commands can be combined and connected using the separator, | (pipe), and executed in order. 
+SeQL consists of the structure of Data Search -> Data Processing-> Data Output Printing. 
+SeQL commands can be combined and connected using the separator, | (pipe), and executed in order. 
 - SeQL is case sensitive. Statement and function names must use capital letters. (For e.g., statements – STATS~BY, WHERE, CONVERT, SORT, LIMIT, HEAD, TAIL, TOP, BOTTOM, ETC and more and Function – MAX, MIN, CONTACT, DATE_FORMAT, ETC and more)  
 - Commands for data processing such as STATS, WHERE, CONVERT, SORT, LIMIT, HEAD, TAIL and others can be used repetitively. 
 - Aggregate functions such as COUNT, MAX, MIN, SUM, AVG, DC, VALUES and GROUP_CONTACT can be used for STATS statement in a form of aggregate function(string function()), number function(aggregate function()) and such.
@@ -151,10 +152,11 @@ SeQL consists of the structure of Data Search -> Data Processing-> Data Output P
 
 
 # 4. SeQL Usage Example
-4.1  Basic Example
+### 4.1  Basic Example
 The table below shows the basic example of data search, processing and output printing.
-[ Grammar and example ]
-#---------------------------------------
+
+#### [ Grammar and example ]
+<pre><code>#---------------------------------------
 # 1) Data Search
 #---------------------------------------
 eqp_dt:[20190822150000 TO 20190822153000] 
@@ -187,12 +189,13 @@ AND prtc:TCP
 # Set fields to print
 | PRINT seq, "source ip", len, cnt
 # Print 10 from the top in order
-| HEAD 10
+| HEAD 10</code></pre>
 
-4.2  Index Data Search
+### 4.2  Index Data Search
 The table below shows an example to search index data stored in eyeCloudSIM.
-[ Grammar and example ]
-#-----------------------
+
+#### [ Grammar and example ]
+<pre><code>#-----------------------
 # 1. Search for certain dates
 #-----------------------
 eqp_dt:[20190822150000 TO 20190822153000] 
@@ -222,7 +225,7 @@ AND prtc:TCP AND attack_nm:*
 | STORAGE FROM RAW 
 # Set group field (Place field with less distinctive field for faster processing.) 
 | GROUP BY prtc, dstn_ip
-| TOP 10
+| TOP 10</code></pre>
 
 4.3  Query Browser Comments
 Query Browser supports both line, multi-line and section comments, as shown below examples.
