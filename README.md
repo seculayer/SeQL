@@ -1,15 +1,14 @@
-<center><h1>SeQL(Seculayer Query Language)</h1></center>
-
-
 # 1. Overview
 <img src="https://user-images.githubusercontent.com/58262527/70760960-ccfe4980-1d8e-11ea-92d0-5fce99b6bdef.png" width="70%">
 
 SeQL, abbreviated from Seculayer Query Language, is a query language developed by SecuLayer’s R&D center.
 SeQL supports search for heterogeneous data such as file, RDB and search data, and union and join analysis for homogeneous and heterogenous data. In addition, it has about 220 built-in functions including but not limited to characters, numbers, dates, logics, arrays and sets for data manipulation and supports various calculation functions. 
 
+
+
 # 2. Understanding SeQL
 SeQL is installed and executed in ShovelServer process in the Analyzer of eyeCloudSIM as shown in the architecture below. Basically, SeQL can search the data stored in eyeCloudSIM and can search the internal and external RDB and file data.
- 
+![Physical](https://user-images.githubusercontent.com/58262527/70762374-a858a080-1d93-11ea-87ff-0cb571760186.png)
 SeQL consists of the structure of Data Search -> Data Processing-> Data Output Printing. 
 Each processing steps can be connected using | (pipe), and executed in order. SeQL’s use of | (pipe), is based on Linux command which is one of the core features. 
 
@@ -19,6 +18,7 @@ Multiple pipes can be connected as shown below. Instead of printing the output v
  
 Various functions for data manipulation can be performed by using | (pipe), which enables to connect to the subordinate conditions. 
 When an end-user requests a SeQL query, it operates in the form of query parsing -> query structure -> recursive processing as shown below.
+ 
  
 
 # 3. SeQL Basic Grammar
@@ -117,8 +117,6 @@ SeQL consists of the structure of Data Search -> Data Processing-> Data Output P
 - Comments can be left and will be ignored when running. For e.g., # - line comment, /*comment*/ - section or multi-line comment.
 - Line counting available using the statement of STATS COUNT(*) AS cnt BY ALL.
 - JOIN analysis among heterogeneous data sources is available. For e.g., File and DB, File and Search, DB and Search, and etc…)
-
-
 
 
 
