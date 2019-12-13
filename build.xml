@@ -4,7 +4,7 @@
 
 	<property name="project.name" value="AntTask"/>
 	<property name="PROJECT" value="${basedir}" />
-	<property name="build.dir" value="${PROJECT}/bin"/>
+	<property name="build.dir" value="${PROJECT}/classes"/>
 	<property name="dist.dir" value="${PROJECT}/deploy"/>
 	<property name="src.dir" value="${PROJECT}/src"/>
 	<property name="deploy.name" value="SeQLParser"/>
