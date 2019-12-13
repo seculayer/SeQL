@@ -53,8 +53,11 @@ Search engine data can be retrieved using LuceneQL, the search language of the e
 
 #### 2)	Data search from RDB source
 SeQL retrieves data from local and remote RDBs based on JDBC.
+
 #### [ Grammar and example ]
-<pre><code>RDB.DSN_01[SQL Query]</code></pre>
+<pre><code>RDB.DSN_01[
+	SQL Query
+]</code></pre>
 
 #### [ Description ]
 <pre><code>- RDB : Prefix for an RDB data source
@@ -62,56 +65,70 @@ SeQL retrieves data from local and remote RDBs based on JDBC.
 - SQL Query : Database’s SQL query</code></pre>
 
 The ID of the RDB data source can be retrieved from the icon, “get data source”  from the QueryBrowser window as shown below.
-<img src="https://user-images.githubusercontent.com/58262527/70769745-114d1200-1dae-11ea-8ec8-3c8ec954e6f9.png" width="90%"> 
+
+<img src="https://user-images.githubusercontent.com/58262527/70769745-114d1200-1dae-11ea-8ec8-3c8ec954e6f9.png" width="90%">
+ 
 To register a data source, go to eyeCloudSIM System > System Data > Custom Tagging > Data Source Mgmt., then register JDBC driver's information.
 
-3)	File data source
+#### 3)	File data source
 File data registered on eyeCloudSIM is retrieved for data search. 
-[ Grammar and example ]
-	FILE.file_01[*:*]
-[ Description ]
-- FILE : Prefix for the File data source
+
+#### [ Grammar and example ]
+<pre><code>FILE.file_01[
+	*:*
+]</code></pre>
+
+#### [ Description ]
+<pre><code>- FILE : Prefix for the File data source
 - file_01 : ID of the File data source
-- *:* : Reserved word for entire file contents
+- *:* : Reserved word for entire file contents</code></pre>
 
 The ID of the File data source can be retrieved from the icon, “get file data”  from the QueryBrowser window as shown below.
- 
+
+<img src="https://user-images.githubusercontent.com/58262527/70769871-84ef1f00-1dae-11ea-9c17-9618cc2fb971.png" width="90%">
+
 To register the file data source, go to eyeCloudSIM Statistics > Bigdata Analysis > File data Mgmt., then register local files. JSON, CSV and more file formats are supported. 
 
-4)	JSON File Data Search
+#### 4)	JSON File Data Search
 JSON file that exists on the server can be loaded on SeQL. 
-[ Grammar and example ]
-	JSON FILE '/CloudESM/data/test.json'
-[ Description ]
-- JSON FILE : Prefix for JSON File
-- /CloudESM/data/test.json : Absolute route of JSON File
 
-3.2  Data Processing
+#### [ Grammar and example ]
+<pre><code>JSON FILE '/CloudESM/data/test.json'</code></pre>
+
+#### [ Description ]
+<pre><code>- JSON FILE : Prefix for JSON File
+- /CloudESM/data/test.json : Absolute route of JSON File</code></pre>
+
+### 3.2  Data Processing
 The data processing step generates statistics on the retrieved data, or performs data conversion, filtering, and sorting.
-[ Grammar and example ]
-	| STATS COUNT(*) AS cnt, DC(`key`) AS dip_cnt  BY src_ip, prtc
-	| WHERE cnt >= 1 AND prtc IN ('TCP', 'UDP')
-	| CONVERT src_ip AS "SOURCE IP", SUBSTR(prtc, 0, 1) AS "PROTOCOL", 
-		LENGTH(src_ip) AS len, CONCAT(src_ip, '/', prtc, '/', 'cnt') AS concat 
-	| SORT cnt DESC
-[ Description ]
-- STATS AGGREGATE FUNCTION BY GROUP FIELD : Statistics statement for Group By. Aggregate functions such as COUNT, MAX, MIN, SUM, AVG, DC, VALUES and GROUP_CONTACT can be used.
+
+#### [ Grammar and example ]
+<pre><code>| STATS COUNT(*) AS cnt, DC(`key`) AS dip_cnt  BY src_ip, prtc
+| WHERE cnt >= 1 AND prtc IN ('TCP', 'UDP')
+| CONVERT src_ip AS "SOURCE IP", SUBSTR(prtc, 0, 1) AS "PROTOCOL", 
+  LENGTH(src_ip) AS len, CONCAT(src_ip, '/', prtc, '/', 'cnt') AS concat 
+| SORT cnt DESC</code></pre>
+	
+#### [ Description ]
+<pre><code>- STATS AGGREGATE FUNCTION BY GROUP FIELD : Statistics statement for Group By. Aggregate functions such as COUNT, MAX, MIN, SUM, AVG, DC, VALUES and GROUP_CONTACT can be used.
 - WHERE : A reserved word for filtering statement. Comparison operators such as >, >=, !=, =, <, <=, IS NULL, IS NOT NULL, LIKE and NOT LIKE can be used. 
 - CONVERT : A reserved word for data conversion statement. Built-in functions such as numbers, characters, logic, dates and data type can be used. 
-- SORT : A reserved word for sorting statement, such as ASC(ascending order) and DESC(descending order).
+- SORT : A reserved word for sorting statement, such as ASC(ascending order) and DESC(descending order).</code></pre>
 
-3.3  Data Output Printing
+### 3.3  Data Output Printing
 Data Output Printing after Data Search and Processing are conducted. 
-[ Grammar and example ]
-	| PRINT seq, "SOURCE IP", len, cnt
-	| TO JSON “/CloudESM/data/test.json”
-	| TO CSV “/CloudESM/data/test.csv”
-[ Description ]
-- PRINT : A reserved word for fields to print. List the fields using comma, “,”.
-- TO JSON : A reserved word for saving the query result as a JSON file. 
-- TO CSV : A reserved word for saving the query result as a CSV file.
 
-3.4  Other Rules 
+#### [ Grammar and example ]
+<pre><code>| PRINT seq, "SOURCE IP", len, cnt
+| TO JSON “/CloudESM/data/test.json”
+| TO CSV “/CloudESM/data/test.csv”</code></pre>
+
+#### [ Description ]
+<pre><code>- PRINT : A reserved word for fields to print. List the fields using comma, “,”.
+- TO JSON : A reserved word for saving the query result as a JSON file. 
+- TO CSV : A reserved word for saving the query result as a CSV file.</code></pre>
+
+### 3.4  Other Rules 
 SeQL consists of the structure of Data Search -> Data Processing-> Data Output Printing. SeQL commands can be combined and connected using the separator, | (pipe), and executed in order. 
 - SeQL is case sensitive. Statement and function names must use capital letters. (For e.g., statements – STATS~BY, WHERE, CONVERT, SORT, LIMIT, HEAD, TAIL, TOP, BOTTOM, ETC and more and Function – MAX, MIN, CONTACT, DATE_FORMAT, ETC and more)  
 - Commands for data processing such as STATS, WHERE, CONVERT, SORT, LIMIT, HEAD, TAIL and others can be used repetitively. 
