@@ -51,7 +51,7 @@ Search engine data can be retrieved using LuceneQL, the search language of the e
 - STORAGE FROM : Set a storage to search from.
 - FIELDS : Set fields to search from. List the fields using , (comma).
 - LIMIT n1 n2 : Set offset of data to pull.
-<pre><code> 
+</pre></code> 
 
 2)	Data search from RDB source
 SeQL retrieves data from local and remote RDBs based on JDBC.
