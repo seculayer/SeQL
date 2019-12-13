@@ -229,7 +229,7 @@ AND prtc:TCP AND attack_nm:*
 | GROUP BY prtc, dstn_ip
 | TOP 10</code></pre>
 
-#### 4.3  Query Browser Comments
+### 4.3  Query Browser Comments
 Query Browser supports both line, multi-line and section comments, as shown below examples.
 
 #### [ Grammar and example ]
@@ -249,7 +249,7 @@ AND prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:*
 | FIELDS src_ip, dstn_ip, prtc 
 | LIMIT 0 10</code></pre>
 
-#### 4.4  Sorting and Cutting Data
+### 4.4  Sorting and Cutting Data
 The table below shows examples of SORT for sorting data, TOP/BOTTOM and HEAD/TAIL for cutting data, and LIMIT to bring data to where desired. 
 Basically, both TOP/BOTTOM and HEAD/TAIL are used to cut data from the beginning or the end, yet the purpose varies. TOP/BOTTOM is used to cut the data from eyeCloudSIM index data in search statements and HEAD/TAIL is used to cut the data while processing the data. 
 
@@ -272,7 +272,7 @@ AND prtc:TCP
 | LIMIT 0 3
 | PRINT "source ip", len, concat</code></pre>
 
-#### 4.5  Search Filter
+### 4.5  Search Filter
 Below shows an example of search filter for correlation analysis when searching for eyeCloudSIM index data. It is following the form of | SEARCH src_ip IN [SeQL].
 SeQL’s search result value is converted to the form of src_ip:(value1 value2 ...), then append this to the upper search condition. The max count for appending is 1000.
 
@@ -291,7 +291,7 @@ AND log_type:1
 | FIELDS eqp_dt, src_ip, dstn_ip, prtc 
 | LIMIT 0 100</code></pre>
 
-#### 4.6  Filter Join 
+### 4.6  Filter Join 
 The table below shows an example of filtering using IN/NOT-IN statement while data processing. 
 
 #### [ Grammar and example ]
@@ -320,7 +320,7 @@ AND prtc IN ('TCP', 'UDP')
           CONCAT(src_ip, '/', prtc, '/', 'cnt') AS concat 
 | PRINT "source ip", len, concat</code></pre>
 
-#### 4.7  Inner Join
+### 4.7  Inner Join
 The table below shows an example of Inner Join where overlapping data is printed from two data sets on join key. 
  
 #### [ Grammar and example ]
@@ -339,7 +339,7 @@ ON a.dstn_ip = b.src_ip
 | STATS COUNT(*) AS cnt BY a.dstn_ip
 | WHERE cnt>=1  AND a.dstn_ip IS NOT NULL;</code></pre>
 
-4.8  Outer Join
+### 4.8  Outer Join
 The table below shows examples of Left, Right and Full Outer Join.
  
 #### [ Grammar and example ]
@@ -397,7 +397,7 @@ ON a.dstn_ip = b.src_ip
 | STATS COUNT(*) AS cnt BY a.dstn_ip 
 | WHERE cnt>=1;</code></pre>
 
-4.9  Union
+### 4.9  Union
 The table below shows examples of combining two data sets using Union and Unial All.
  
 #### [ Grammar and example ]
@@ -435,7 +435,7 @@ UNION ALL
 | STATS COUNT(*) AS cnt BY src_ip
 | WHERE cnt>=1 AND src_ip IS NOT NULL;</code></pre>
 
-#### 4.10  Count Query
+### 4.10  Count Query
 The table below shows an example of counting result of data search and processing. 
 
 #### [ Grammar and example ]
@@ -452,7 +452,7 @@ AND log_type:1
 # Total count of above search result
 | STATS COUNT(*) AS cnt, DC(src_ip) AS dc_cnt BY ALL</code></pre>
 
-#### 4.11  Calling Java Function
+### 4.11  Calling Java Function
 The table below shows an example of calling Java function within internal engine. When running Shovel engine, it can be used by calling Java function included in loaded jar library registered in CLASSPATH. The result is printed by calling method of Java Class - JAVA_METHOD(class, method[, arg1[, arg2 ..]]). 
 Note: Class must be declared without parameter in a default form of constructor, className(). For e.g., public IPUtil(). Otherwise, constructor declaration should be omitted.
 
@@ -472,7 +472,7 @@ AND prtc:TCP
 | CONVERT JAVA_METHOD('com.seculayer.seql.util.cipher.AES256', 'encrypt', 'ABC') AS enc_str, JAVA_METHOD('com.seculayer.seql.util.cipher.AES256', 'decrypt', 'Xiiiiab1RRMP+B+DnBfbMw==') AS dec_str
 | HEAD 10</code></pre>
 
-#### 4.12  Using Function within a Function
+### 4.12  Using Function within a Function
 The table below shows an example of a nested fuction, using function within a function in a form of Function(function()).
 
 #### [ Grammar and example ]
@@ -493,7 +493,7 @@ AND prtc:TCP
           TYPEOF(TODATE(now, 'yyyyMMddHHmmss')) AS now_type
 | PRINT scnt, scnt2, rnd_std, now, now_type</code></pre>
 
-#### 4.13  Searching JSON File
+### 4.13  Searching JSON File
 The table below shows an example of searching JSON File existing on the server. 
 
 #### [ Grammar and example ]
@@ -502,7 +502,7 @@ The table below shows an example of searching JSON File existing on the server.
 | STATS COUNT(*) AS cnt, DC(`key`) AS dcnt  BY dstn_ip
 | PRINT dstn_ip, dcnt, cnt;</code></pre>
 
-#### 4.14  Searching RDB Data Source
+### 4.14  Searching RDB Data Source
 The table below shows an example of search using RDB data source registered on eyeCloudSIM.
 
 #### [ Grammar and example ]
@@ -530,7 +530,7 @@ RDB.db_01[
 | PRINT code_type, cnt, dcnt
 | HEAD 3;</code></pre>
 
-#### 4.15  Searching File Data Source
+### 4.15  Searching File Data Source
 The table below shows an example of search using file data source registered on eyeCloudSIM.
 
 #### [ Grammar and example ]
@@ -543,7 +543,7 @@ The table below shows an example of search using file data source registered on 
 | PRINT src_ip, prtc, cnt, dcnt
 | HEAD 3;</code></pre>
 
-#### 4.16  Join between Heterogeneous Data Sources
+### 4.16  Join between Heterogeneous Data Sources
 The table below shows examples of join analysis between heterogeneous data sources File and RDB, RDB and Search, and File and Search. 
 
 #### [ Grammar and example ]
@@ -598,7 +598,7 @@ ON a.src_ip = b.src_ip
 | WHERE b.cnt >= 20
 | print b.eqp_dt, a.src_ip, b.cnt</code></pre>
 
-#### 4.17  Save Results as a File
+### 4.17  Save Results as a File
 The table below shows examples of saving the SeQL query results as files such as JSON, CSV and delimiter separated file. For CSV and delimiter separated file, header and separator can be user defined, and if not chosen, , (comma) is used as default. 
 
 #### [ Grammar and example ]
@@ -617,7 +617,7 @@ The table below shows examples of saving the SeQL query results as files such as
 # Save as a delimiter separated file
 | TOFILE "/home/temp/test.txt" SEPARATOR="|" HEADER=true</code></pre>
 
-#### 4.18  Save Results on DB
+### 4.18  Save Results on DB
 The table below shows an example of saving the SeQL query results on RDB. There are two ways to save by 1) giving DB data source ID and table names, and 2) entering INSERT query explicitly. 
 
 #### [ Grammar and example ]
@@ -636,7 +636,7 @@ The table below shows an example of saving the SeQL query results on RDB. There 
   INSERT INTO TEMP_DATA (`index`, `data`) values (@{dcnt}, @{src_ip})
 ]</code></pre>
 
-#### 4.19  Using CASE~WHEN 
+### 4.19  Using CASE~WHEN 
 The table below shows an example of using CASE~WHEN Function between CONVERT and STATS statements. 
 
 #### [ Grammar and example ]
@@ -653,7 +653,7 @@ The table below shows an example of using CASE~WHEN Function between CONVERT and
 | PRINT prtc, src_ip, case_max, case_prtc
 ;</code></pre>
 
-#### 4.20  Using BETWEEN 
+### 4.20  Using BETWEEN 
 The table below shows an example of BETWEEN a AND b filtering to a WHERE statement.
  
 #### [ Grammar and example ]
@@ -667,7 +667,7 @@ The table below shows an example of BETWEEN a AND b filtering to a WHERE stateme
 | HEAD 3
 | PRINT dcnt, src_ip</code></pre>
 
-#### 4.21  Using REGEXP 
+### 4.21  Using REGEXP 
 The table below shows an example of REGEXP (regular expression) filtering to a WHERE statement.  
 
 #### [ Grammar and example ]
@@ -680,7 +680,7 @@ The table below shows an example of REGEXP (regular expression) filtering to a W
 | HEAD 3
 | PRINT dcnt, src_ip</code></pre>
 
-#### 4.22  Creating QueryBrowser Table
+### 4.22  Creating QueryBrowser Table
 The table below shows an example to create a QueryBrowser Table with analysis result. In case the same table exists already, existing table is deleted and new one is created when Rewrite=True, and data is added to the exisiting table when Rewrite=False. 
 TOTABLE tableName=[table name] REWRITE=[true/false]
 
@@ -698,7 +698,7 @@ TOTABLE tableName=[table name] REWRITE=[true/false]
 | TOTABLE tableName=TEMP_DATA REWRITE=true
 ;</code></pre>
 
-#### 4.23  Searching QueryBrowser Table
+### 4.23  Searching QueryBrowser Table
 The table below shows an example of searching data from QueryBrowser Table. TABLE.LOCAL is a reserved word for QueryBrowser Table. 
 TABLE.LOCAL[	  Spark-SQL search Query   ]
 
