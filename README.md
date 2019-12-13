@@ -166,6 +166,7 @@ AND prtc:TCP
 # Set the output field to print results
 | FIELDS `key`, src_ip, dstn_ip, prtc 
 | LIMIT 0 100
+
 #---------------------------------------
 # 2) Data Processing 
 #---------------------------------------
@@ -183,6 +184,7 @@ AND prtc:TCP
 | SORT cnt DESC
 # Sequential numbers are applied by order
 | CONVERT SEQ() AS seq 
+
 #---------------------------------------
 # 3) Data output printing
 #---------------------------------------
@@ -227,10 +229,11 @@ AND prtc:TCP AND attack_nm:*
 | GROUP BY prtc, dstn_ip
 | TOP 10</code></pre>
 
-4.3  Query Browser Comments
+#### 4.3  Query Browser Comments
 Query Browser supports both line, multi-line and section comments, as shown below examples.
-[ Grammar and example ]
-# Comment: Use # for commenting lines, and /**/ for multi-lines and specific section 
+
+#### [ Grammar and example ]
+<pre><code># Comment: Use # for commenting lines, and /**/ for multi-lines and specific section 
 # Search
 eqp_dt:[20190822150000 TO 20190822153000] 
 AND prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:* 
@@ -244,13 +247,14 @@ AND prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:*
 | LIMIT 0 100;
 */
 | FIELDS src_ip, dstn_ip, prtc 
-| LIMIT 0 10
+| LIMIT 0 10</code></pre>
 
-4.4  Sorting and Cutting Data
+#### 4.4  Sorting and Cutting Data
 The table below shows examples of SORT for sorting data, TOP/BOTTOM and HEAD/TAIL for cutting data, and LIMIT to bring data to where desired. 
 Basically, both TOP/BOTTOM and HEAD/TAIL are used to cut data from the beginning or the end, yet the purpose varies. TOP/BOTTOM is used to cut the data from eyeCloudSIM index data in search statements and HEAD/TAIL is used to cut the data while processing the data. 
-[ Grammar and example ]
-eqp_dt:[20190722160000 TO 20190722163000] 
+
+#### [ Grammar and example ]
+<pre><code>eqp_dt:[20190722160000 TO 20190722163000] 
 AND prtc:TCP
 | SEARCH FROM RAW STORAGE
 | GROUP BY prtc, src_ip
@@ -266,13 +270,14 @@ AND prtc:TCP
 | TAIL 5
 # 3) LIMIT Example
 | LIMIT 0 3
-| PRINT "source ip", len, concat
+| PRINT "source ip", len, concat</code></pre>
 
-4.5  Search Filter
+#### 4.5  Search Filter
 Below shows an example of search filter for correlation analysis when searching for eyeCloudSIM index data. It is following the form of | SEARCH src_ip IN [SeQL].
 SeQL’s search result value is converted to the form of src_ip:(value1 value2 ...), then append this to the upper search condition. The max count for appending is 1000.
-[ Grammar and example ]
-eqp_dt:[20190822150000 TO 20190822153000] 
+
+#### [ Grammar and example ]
+<pre><code>eqp_dt:[20190822150000 TO 20190822153000] 
 AND log_type:1
 | STORAGE FROM RAW 
 # Example of using search filter
@@ -284,12 +289,13 @@ AND log_type:1
 		| PRINT src_ip
 	] 
 | FIELDS eqp_dt, src_ip, dstn_ip, prtc 
-| LIMIT 0 100
+| LIMIT 0 100</code></pre>
 
-4.6  Filter Join 
+#### 4.6  Filter Join 
 The table below shows an example of filtering using IN/NOT-IN statement while data processing. 
-[ Grammar and example ]
-eqp_dt:[20190822150000 TO 20190822153000] 
+
+#### [ Grammar and example ]
+<pre><code>eqp_dt:[20190822150000 TO 20190822153000] 
 AND prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:* 
 | STORAGE FROM RAW 
 | FIELDS src_ip, dstn_ip, prtc 
@@ -312,13 +318,13 @@ AND prtc IN ('TCP', 'UDP')
   AND (cnt >= 0 AND (cnt=1 OR cnt=2 OR cnt=3)) 
 | CONVERT src_ip AS "source ip", SUBSTR(prtc, 0, 1) AS "protocol", LENGTH(src_ip) AS len, 
           CONCAT(src_ip, '/', prtc, '/', 'cnt') AS concat 
-| PRINT "source ip", len, concat
+| PRINT "source ip", len, concat</code></pre>
 
-4.7  Inner Join
+#### 4.7  Inner Join
 The table below shows an example of Inner Join where overlapping data is printed from two data sets on join key. 
  
-[ Grammar and example ]
-[ eqp_dt:[20190822150000 TO 20190822153000] 
+#### [ Grammar and example ]
+<pre><code>[ eqp_dt:[20190822150000 TO 20190822153000] 
     AND prtc:TCP AND attack_nm:* 
     | GROUP BY prtc, dstn_ip 
     | TOP 100 
@@ -331,13 +337,13 @@ INNER JOIN
 ] b 
 ON a.dstn_ip = b.src_ip 
 | STATS COUNT(*) AS cnt BY a.dstn_ip
-| WHERE cnt>=1  AND a.dstn_ip IS NOT NULL;
+| WHERE cnt>=1  AND a.dstn_ip IS NOT NULL;</code></pre>
 
 4.8  Outer Join
 The table below shows examples of Left, Right and Full Outer Join.
  
-[ Grammar and example ]
-#-----------------------
+#### [ Grammar and example ]
+<pre><code>#-----------------------
 # 1. Example of Left Outer Join 
 #-----------------------
 [ eqp_dt:[20190822150000 TO 20190822153000] 
@@ -389,13 +395,13 @@ FULL OUTER JOIN
 ] b 
 ON a.dstn_ip = b.src_ip 
 | STATS COUNT(*) AS cnt BY a.dstn_ip 
-| WHERE cnt>=1;
+| WHERE cnt>=1;</code></pre>
 
 4.9  Union
 The table below shows examples of combining two data sets using Union and Unial All.
  
-[ Grammar and example ]
-#-----------------------
+#### [ Grammar and example ]
+<pre><code>#-----------------------
 # 1. Example of Union 
 #-----------------------
 [ eqp_dt:[20190822150000 TO 20190822153000] 
@@ -427,12 +433,13 @@ UNION ALL
     | TOP 2 
 ]  
 | STATS COUNT(*) AS cnt BY src_ip
-| WHERE cnt>=1 AND src_ip IS NOT NULL;
+| WHERE cnt>=1 AND src_ip IS NOT NULL;</code></pre>
 
-4.10  Count Query
+#### 4.10  Count Query
 The table below shows an example of counting result of data search and processing. 
-[ Grammar and example ]
-eqp_dt:[20190822150000 TO 20190822153000] 
+
+#### [ Grammar and example ]
+<pre><code>eqp_dt:[20190822150000 TO 20190822153000] 
 AND log_type:1
 | STORAGE FROM RAW 
 | SEARCH src_ip IN [
@@ -443,13 +450,14 @@ AND log_type:1
 		| PRINT src_ip
 	] 
 # Total count of above search result
-| STATS COUNT(*) AS cnt, DC(src_ip) AS dc_cnt BY ALL
+| STATS COUNT(*) AS cnt, DC(src_ip) AS dc_cnt BY ALL</code></pre>
 
-4.11  Calling Java Function
+#### 4.11  Calling Java Function
 The table below shows an example of calling Java function within internal engine. When running Shovel engine, it can be used by calling Java function included in loaded jar library registered in CLASSPATH. The result is printed by calling method of Java Class - JAVA_METHOD(class, method[, arg1[, arg2 ..]]). 
 Note: Class must be declared without parameter in a default form of constructor, className(). For e.g., public IPUtil(). Otherwise, constructor declaration should be omitted.
-[ Grammar and example ]
-eqp_dt:[20190822150000 TO 20190822153000] 
+
+#### [ Grammar and example ]
+<pre><code>eqp_dt:[20190822150000 TO 20190822153000] 
 AND prtc:TCP
 | SEARCH FROM RAW STORAGE
 | FIELDS `key`, src_ip, dstn_ip, prtc 
@@ -462,12 +470,13 @@ AND prtc:TCP
 # 2. In case with parameter : JAVA_METHOD(class, method[, arg1[, arg2 ..]])
 | CONVERT JAVA_METHOD('com.seculayer.seql.util.IPUtil', 'ip2long', '192.168.1.1') AS ip2long
 | CONVERT JAVA_METHOD('com.seculayer.seql.util.cipher.AES256', 'encrypt', 'ABC') AS enc_str, JAVA_METHOD('com.seculayer.seql.util.cipher.AES256', 'decrypt', 'Xiiiiab1RRMP+B+DnBfbMw==') AS dec_str
-| HEAD 10
+| HEAD 10</code></pre>
 
-4.12  Using Function within a Function
+#### 4.12  Using Function within a Function
 The table below shows an example of a nested fuction, using function within a function in a form of Function(function()).
-[ Grammar and example ]
-eqp_dt:[20190827160000 TO 20190827163000] 
+
+#### [ Grammar and example ]
+<pre><code>eqp_dt:[20190827160000 TO 20190827163000] 
 AND prtc:TCP 
 | STORAGE FROM RAW 
 | FIELDS `src_ip`, dstn_ip, dstn_port, prtc 
@@ -482,20 +491,22 @@ AND prtc:TCP
 # Using date function, NOW() inside a date function, DATE_FORMAT()
 | CONVERT DATE_FORMAT(NOW(), 'yyyyMMddHHmmss') AS now,
           TYPEOF(TODATE(now, 'yyyyMMddHHmmss')) AS now_type
-| PRINT scnt, scnt2, rnd_std, now, now_type
+| PRINT scnt, scnt2, rnd_std, now, now_type</code></pre>
 
-4.13  Searching JSON File
+#### 4.13  Searching JSON File
 The table below shows an example of searching JSON File existing on the server. 
-[ Grammar and example ]
-JSON FILE '/CloudESM/data/test.json'
+
+#### [ Grammar and example ]
+<pre><code>JSON FILE '/CloudESM/data/test.json'
 | WHERE total = 2
 | STATS COUNT(*) AS cnt, DC(`key`) AS dcnt  BY dstn_ip
-| PRINT dstn_ip, dcnt, cnt;
+| PRINT dstn_ip, dcnt, cnt;</code></pre>
 
-4.14  Searching RDB Data Source
+#### 4.14  Searching RDB Data Source
 The table below shows an example of search using RDB data source registered on eyeCloudSIM.
-[ Grammar and example ]
-#-----------------------
+
+#### [ Grammar and example ]
+<pre><code>#-----------------------
 # 1. Example of searching local DB
 #-----------------------
 RDB.LOCAL[ 
@@ -517,24 +528,26 @@ RDB.db_01[
 | WHERE code_type = 'CS0004'
 | STATS COUNT(*) AS cnt, DC(required) AS dcnt  BY code_type
 | PRINT code_type, cnt, dcnt
-| HEAD 3;
+| HEAD 3;</code></pre>
 
-4.15  Searching File Data Source
+#### 4.15  Searching File Data Source
 The table below shows an example of search using file data source registered on eyeCloudSIM.
-[ Grammar and example ]
-FILE.4[
+
+#### [ Grammar and example ]
+<pre><code>FILE.4[
   	*:*
 ]
 | STATS COUNT(*) AS cnt, DC(dstn_port) AS dcnt  BY src_ip, prtc
 | WHERE cnt >= 1 
   AND prtc IN ('TCP', 'UDP')
 | PRINT src_ip, prtc, cnt, dcnt
-| HEAD 3;
+| HEAD 3;</code></pre>
 
-4.16  Join between Heterogeneous Data Sources
+#### 4.16  Join between Heterogeneous Data Sources
 The table below shows examples of join analysis between heterogeneous data sources File and RDB, RDB and Search, and File and Search. 
-[ Grammar and example ]
-#-----------------------
+
+#### [ Grammar and example ]
+<pre><code>#-----------------------
 # 1. Example of Union between File and DB
 #-----------------------
 [
@@ -583,12 +596,13 @@ INNER JOIN
 ] b
 ON a.src_ip = b.src_ip
 | WHERE b.cnt >= 20
-| print b.eqp_dt, a.src_ip, b.cnt
+| print b.eqp_dt, a.src_ip, b.cnt</code></pre>
 
-4.17  Save Results as a File
+#### 4.17  Save Results as a File
 The table below shows examples of saving the SeQL query results as files such as JSON, CSV and delimiter separated file. For CSV and delimiter separated file, header and separator can be user defined, and if not chosen, , (comma) is used as default. 
-[ Grammar and example ]
-FILE.4[
+
+#### [ Grammar and example ]
+<pre><code>FILE.4[
   	*:*
 ]
 | STATS COUNT(*) AS cnt, DC(dstn_port) AS dcnt  BY src_ip, prtc
@@ -601,12 +615,13 @@ FILE.4[
 # Save as a CSV file
 | TOCSV "/home/temp/test.csv" HEADER=true
 # Save as a delimiter separated file
-| TOFILE "/home/temp/test.txt" SEPARATOR="|" HEADER=true
+| TOFILE "/home/temp/test.txt" SEPARATOR="|" HEADER=true</code></pre>
 
-4.18  Save Results on DB
+#### 4.18  Save Results on DB
 The table below shows an example of saving the SeQL query results on RDB. There are two ways to save by 1) giving DB data source ID and table names, and 2) entering INSERT query explicitly. 
-[ Grammar and example ]
-FILE.4[
+
+#### [ Grammar and example ]
+<pre><code>FILE.4[
   	*:*
 ]
 | STATS COUNT(*) AS cnt, DC(dstn_port) AS dcnt  BY src_ip, prtc
@@ -619,12 +634,13 @@ FILE.4[
 # Saving on DB by using INSERT query
 | TODB dbId=TRUNK query=[
   INSERT INTO TEMP_DATA (`index`, `data`) values (@{dcnt}, @{src_ip})
-]
+]</code></pre>
 
-4.19  Using CASE~WHEN 
+#### 4.19  Using CASE~WHEN 
 The table below shows an example of using CASE~WHEN Function between CONVERT and STATS statements. 
-[ Grammar and example ]
-FILE.4[
+
+#### [ Grammar and example ]
+<pre><code>FILE.4[
   	*:*
 ]
 | STATS COUNT(*) AS cnt, 
@@ -635,12 +651,13 @@ FILE.4[
 		        ELSE '-' 
 		   END) AS case_prtc
 | PRINT prtc, src_ip, case_max, case_prtc
-;
+;</code></pre>
 
-4.20  Using BETWEEN 
-The table below shows an example of BETWEEN a AND b filtering to a WHERE statement. 
-[ Grammar and example ]
-FILE.4[
+#### 4.20  Using BETWEEN 
+The table below shows an example of BETWEEN a AND b filtering to a WHERE statement.
+ 
+#### [ Grammar and example ]
+<pre><code>FILE.4[
   	*:*
 ]
 | STATS COUNT(*) AS cnt, DC(dstn_port) AS dcnt  BY src_ip, prtc
@@ -648,25 +665,27 @@ FILE.4[
 | WHERE cnt BETWEEN 1 AND 10
   AND prtc IN ('TCP', 'UDP')
 | HEAD 3
-| PRINT dcnt, src_ip
+| PRINT dcnt, src_ip</code></pre>
 
-4.21  Using REGEXP 
+#### 4.21  Using REGEXP 
 The table below shows an example of REGEXP (regular expression) filtering to a WHERE statement.  
-[ Grammar and example ]
-FILE.4[
+
+#### [ Grammar and example ]
+<pre><code>FILE.4[
   	*:*
 ]
 | STATS COUNT(*) AS cnt, DC(dstn_port) AS dcnt  BY src_ip, prtc
 # Using REGEXP 
 | WHERE src_ip REGEXP '192\.168\..+\.'
 | HEAD 3
-| PRINT dcnt, src_ip
+| PRINT dcnt, src_ip</code></pre>
 
-4.22  Creating QueryBrowser Table
+#### 4.22  Creating QueryBrowser Table
 The table below shows an example to create a QueryBrowser Table with analysis result. In case the same table exists already, existing table is deleted and new one is created when Rewrite=True, and data is added to the exisiting table when Rewrite=False. 
 TOTABLE tableName=[table name] REWRITE=[true/false]
-[ Grammar and example ]
-FILE.4[
+
+#### [ Grammar and example ]
+<pre><code>FILE.4[
   	*:*
 ]
 | STATS COUNT(*) AS cnt, DC(dstn_port) AS dcnt  BY src_ip, prtc
@@ -677,20 +696,21 @@ FILE.4[
 # Save to QueryBrowser Table
 # - If REWRITE is true then the table is recreated. if false then data is appended.
 | TOTABLE tableName=TEMP_DATA REWRITE=true
-;
+;</code></pre>
 
-4.23  Searching QueryBrowser Table
+#### 4.23  Searching QueryBrowser Table
 The table below shows an example of searching data from QueryBrowser Table. TABLE.LOCAL is a reserved word for QueryBrowser Table. 
 TABLE.LOCAL[	  Spark-SQL search Query   ]
-[ Grammar and example ]
-TABLE.LOCAL[ 
+
+#### [ Grammar and example ]
+<pre><code>TABLE.LOCAL[ 
   SELECT * FROM TEMP_DATA_1
 ]
 | WHERE total >= 10
 | STATS SUM(total) AS total BY src_ip
 | PRINT src_ip, total
 | SORT total DESC
-| HEAD 10;
+| HEAD 10;</code></pre></code></pre>
 
 
 
