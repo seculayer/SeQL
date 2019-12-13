@@ -710,17 +710,75 @@ TABLE.LOCAL[	  Spark-SQL search Query   ]
 | STATS SUM(total) AS total BY src_ip
 | PRINT src_ip, total
 | SORT total DESC
-| HEAD 10;</code></pre></code></pre>
+| HEAD 10;</code></pre>
 
 
+### 4.24  SeQL 파일프로세싱 구문 예제
+SeQL은 기본적으로 메모리 기반위에서 데이터를 처리하여 빠른 성능을 제공한다. 그러나 메모리를 초과하는 대용량 데이터를 처리하기 위한 옵션을 별도로 제공한다.
+아래와 같이 SeQL 구문 상단에 @PROCESS_BY_FILE 선언을 해주면 Group-By, Sort, Filter, Join 등모든 쿼리 프로세싱을 파일 기반으로 처리한다.
+이때 내부적으로 사용하는 프로세싱 파일이 생성되는 경로는 /CloudESM/data/cache 디렉토리이며 사용자가 컨피그(/CloudESM/app/shovel_server/conf/shovel-server-conf.xml 설정 파일의 seql.file.cache.dir 항목 경로) 설정으로 변경 가능하다.
+자세한 사용 예제는 아래와 같다.
+
+#### [ Grammar and example ]
+<pre><code>@PROCESS_BY_FILE
+eqp_dt:[20190919090000 TO 20190919091000] 
+AND prtc:TCP
+| STORAGE FROM RAW
+| FIELDS `key`, src_ip, dstn_ip, prtc 
+| LIMIT 0 100
+| STATS COUNT(*) AS cnt BY src_ip, prtc
+| PRINT src_ip, prtc, cnt
+| HEAD 10
+;</code></pre>
+
+### 4.25  Parallel Query 예제
+1:N 형태의 다중 콜렉터 구조에서 병렬로 쿼리를 실행하기 위한 Parallel Query 기능을 지원하며아래와 같은 문법으로 사용한다.
+<pre><code>Grammar> CLUSTER.PARALLEL[   SeSQL 조회쿼리   ]</code></pre>
+"데이터를 옯기는 것이 아니라 계산결과를 옮기는 것"이 성능에 유리하다는 사상에 기초하여  CLUSTER.PARALLEL로 선언된 SeQL 구문을 1차적으로 콜렉터 서버의 검색엔진에서 처리하여 그 결과를 전송하면 Shovel 서버에서 모든 데이터를 취합하여 결과를 리턴하는 형태로 동작한다. 
+CLUSTER.PARALLEL 구문안에 파일 프로세싱을 위한 @PROCESS_BY_FILE 선언을 지원하며 CLUSTER.PARALLEL 구문 내에서는 검색/그룹검색->처리 형태의 구문은 사용가능하나 Join/Union/Search-Filter 등은 콜렉터 노드에서 의미가 없기 때문에 사용이 제한된다.
+
+#### [ Grammar and example ]
+<pre><code>#-----------------------
+# 1. Search Example
+#-----------------------
+CLUSTER.PARALLEL[
+	@PROCESS_BY_FILE
+	eqp_dt:[20190919090000 TO 20190919091000] 
+	AND prtc:TCP
+	| STORAGE FROM RAW
+	| FIELDS `key`, src_ip, dstn_ip, prtc 
+	| LIMIT 0 100
+	| STATS COUNT(*) AS cnt BY src_ip, prtc
+	| PRINT src_ip, prtc, cnt
+	| HEAD 10
+]
+| STATS SUM(cnt) AS scnt BY src_ip, prtc
+| SORT scnt DESC
+| HEAD 10;
+
+#-----------------------
+# 2. Group Search Example
+#-----------------------
+CLUSTER.PARALLEL[
+	@PROCESS_BY_FILE
+	eqp_dt:[20190919090000 TO 20190919091000] 
+	AND prtc:TCP
+	| STORAGE FROM RAW
+	| GROUP BY prtc, src_ip 
+	| STATS COUNT(*) AS cnt BY src_ip
+	| PRINT src_ip, cnt
+	| HEAD 1000
+]
+| STATS SUM(cnt) AS scnt BY src_ip
+| SORT scnt DESC
+| HEAD 10;</code></pre>
 
 
 
 # 5. SeQL Built-in Functions
 SeQL supports about 200 built-in functions related to letters / numbers / dates / logics / ARRAYs / sets / files.
 It is basically used in the form of <code>function_name(parameter1, parameter2, …) AS alias</code>.
-<pre><code>
-eqp_dt:[20190919090000 TO 20190919091000] 
+<pre><code>eqp_dt:[20190919090000 TO 20190919091000] 
 AND prtc:TCP 
 | STORAGE FROM RAW 
 | FIELDS `src_ip`, dstn_ip, dstn_port, prtc 
