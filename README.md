@@ -717,7 +717,29 @@ TABLE.LOCAL[	  Spark-SQL search Query   ]
 
 
 # 5. SeQL Built-in Functions
-Dynamic Select refers to a search query that searches data using a single search query or performs join analysis between various data sources without loading the data into memory. Basic forms are given below examples.
+SeQL supports about 200 built-in functions related to letters / numbers / dates / logics / ARRAYs / sets / files.
+It is basically used in the form of <code>function_name(parameter1, parameter2, …) AS alias</code>.
+<pre><code>
+eqp_dt:[20190919090000 TO 20190919091000] 
+AND prtc:TCP 
+| STORAGE FROM RAW 
+| FIELDS `src_ip`, dstn_ip, dstn_port, prtc 
+| LIMIT 0 10 
+| STATS COUNT(*) AS cnt,  DC(dstn_ip) AS dcnt, 
+        /* 그룹함수 SUM() 내에 논리함수 IF() 사용 예 */
+	SUM(IF(prtc='TCP', 1, 0)) AS scnt, 
+        SUM(IF(SUBSTR(prtc,0,1)='T', 1, 0)) AS scnt2, 
+        /* 숫자함수 ROUND() 내에 그룹함수 STDEV() 사용 예 */
+	ROUND(STDEV(`no`), 2) AS rnd_std 
+  BY prtc, dstn_port 
+# 날짜함수 DATE_FORMAT() 내에 날짜함수 NOW() 사용 예
+| CONVERT DATE_FORMAT(NOW(), 'yyyyMMddHHmmss') AS NOW,
+          TYPEOF(TODATE(NOW, 'yyyyMMddHHmmss')) AS now_type
+| PRINT scnt, scnt2, rnd_std, NOW, now_type;
+</code></pre>
+Functions can be nested as above.
+As shown in the above example, aggregate function can be used and nested use in STATS ~ BY statement, and other functions except aggregate function can be used in CONVERT / WHERE statement.
+
   
 ### 5.1  Functions Related to Numbers
 - ABS(number) prints the absolute value.
