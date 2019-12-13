@@ -12,6 +12,9 @@ SeQL is installed and executed in ShovelServer process in the Analyzer of eyeClo
 <img src="https://user-images.githubusercontent.com/58262527/70762374-a858a080-1d93-11ea-87ff-0cb571760186.png" width="70%">
 
 SeQL consists of the structure of Data Search -> Data Processing-> Data Output Printing. 
+
+<img src="https://user-images.githubusercontent.com/58262527/70762715-fa4df600-1d94-11ea-9b8d-84549d2b7abf.png" width="70%">
+
 Each processing steps can be connected using | (pipe), and executed in order. SeQL’s use of | (pipe), is based on Linux command which is one of the core features. 
 
 An analogy of liquid flowing in a single pipe is useful to understand the process of input, execution and output of commands. Output value is printed as shown below. 
