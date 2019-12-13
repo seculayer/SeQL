@@ -322,7 +322,9 @@ AND prtc IN ('TCP', 'UDP')
 
 ### 4.7  Inner Join
 The table below shows an example of Inner Join where overlapping data is printed from two data sets on join key. 
- 
+
+<img src="https://user-images.githubusercontent.com/58262527/70772454-ee276000-1db7-11ea-8a41-c67ba9947d7d.png" width="100%">
+
 #### [ Grammar and example ]
 <pre><code>[ eqp_dt:[20190822150000 TO 20190822153000] 
     AND prtc:TCP AND attack_nm:* 
@@ -735,7 +737,7 @@ AND prtc:TCP
 
 ### 4.25  Parallel Query example
 SeQL supports parallel query on 1: N type multiple collector structures. Use parallel query like this:
-<pre><code>Grammar> CLUSTER.PARALLEL[   SeSQL Query  ]</code></pre>
+<pre><code>Grammar> CLUSTER.PARALLEL[   SeQL Query  ]</code></pre>
 Based on the idea that "moving calculation results rather than moving data" is beneficial to performance, the SeQL statements declared as CLUSTER.PARALLEL are processed by the collector server's search engine and transmitted to the Shovel server. It works by collecting all the data and returning the result.
 @PROCESS_BY_FILE declaration for file processing is supported in CLUSTER.PARALLEL statement. Within CLUSTER.PARALLEL statement, search / group search-> processing syntax is available, but Join / Union / Search-Filter is not meaningful at collector node. Therefore, use is limited.
 
