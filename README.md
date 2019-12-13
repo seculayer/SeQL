@@ -54,16 +54,17 @@ Search engine data can be retrieved using LuceneQL, the search language of the e
 #### 2)	Data search from RDB source
 SeQL retrieves data from local and remote RDBs based on JDBC.
 #### [ Grammar and example ]
-<pre><code>	RDB.DSN_01[SQL Query]</code></pre>
+<pre><code>RDB.DSN_01[SQL Query]</code></pre>
 
 #### [ Description ]
-<pre><code>	- RDB : Prefix for an RDB data source
+<pre><code>- RDB : Prefix for an RDB data source
 - DSN_01 : ID of the RDB data source
 - SQL Query : Database’s SQL query</code></pre>
 
 The ID of the RDB data source can be retrieved from the icon, “get data source”  from the QueryBrowser window as shown below.
- 
+<img src="https://user-images.githubusercontent.com/58262527/70769745-114d1200-1dae-11ea-8ec8-3c8ec954e6f9.png" width="90%"> 
 To register a data source, go to eyeCloudSIM System > System Data > Custom Tagging > Data Source Mgmt., then register JDBC driver's information.
+
 3)	File data source
 File data registered on eyeCloudSIM is retrieved for data search. 
 [ Grammar and example ]
