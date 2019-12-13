@@ -20,6 +20,8 @@ Each processing steps can be connected using | (pipe), and executed in order. Se
 An analogy of liquid flowing in a single pipe is useful to understand the process of input, execution and output of commands. Output value is printed as shown below. 
   
 Multiple pipes can be connected as shown below. Instead of printing the output value from first command, let it flow to the second pipe via connector, then it becomes the input value of the second pipe. 
+
+<img src="https://user-images.githubusercontent.com/58262527/70762770-35502980-1d95-11ea-9b96-eef0e2addb7a.png" width="70%">
  
 Various functions for data manipulation can be performed by using | (pipe), which enables to connect to the subordinate conditions. 
 When an end-user requests a SeQL query, it operates in the form of query parsing -> query structure -> recursive processing as shown below.
