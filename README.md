@@ -26,7 +26,7 @@ Multiple pipes can be connected as shown below. Instead of printing the output v
 Various functions for data manipulation can be performed by using | (pipe), which enables to connect to the subordinate conditions. 
 When an end-user requests a SeQL query, it operates in the form of query parsing -> query structure -> recursive processing as shown below.
 
-<img src="https://user-images.githubusercontent.com/58262527/70762837-71838a00-1d95-11ea-837b-d1f28f577e64.png" width="70%">
+<img src="https://user-images.githubusercontent.com/58262527/70762837-71838a00-1d95-11ea-837b-d1f28f577e64.png" width="90%">
  
  
 
