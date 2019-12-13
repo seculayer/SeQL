@@ -33,16 +33,20 @@ When an end-user requests a SeQL query, it operates in the form of query parsing
 # 3. SeQL Basic Grammar
 SeQL consists of the structure of Data Search -> Data Processing-> Data Output Printing. Data search is performed from eyeCloudSIM search engine data, DB data, file data and more. 
 
-3.1  Data Search
-1)	Data search from search engine
-Search engine data can be retrieved using LuceneQL, the search language of the eyeCloudSIM search engine. 
-[ Grammar and example ]
+### 3.1  Data Search
+#### 1)	Data search from search engine
+Search engine data can be retrieved using LuceneQL, the search language of the eyeCloudSIM search engine.
+ 
+#### [ Grammar and example ]
+<pre><code>
 prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:*
 | LAST 5 MINUTE
 | STORAGE FROM RAW
 | FIELDS `key`, src_ip, dstn_ip, prtc 
-	| LIMIT 0 100
-[ Description ]
+| LIMIT 0 100
+<code></pre>
+
+#### [ Description ]
 - prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:* : LuceneQL search condition
 - LAST n [SECOND/MINUTE/HOUR/DAY/MONTH/YEAR] : Query of the latest target time at the current time.
 - STORAGE FROM : Set a storage to search from.
