@@ -45,11 +45,11 @@ Search engine data can be retrieved using LuceneQL, the search language of the e
 | LIMIT 0 100</code></pre>
 
 #### [ Description ]
-<pre><code>- prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:*: LuceneQL search condition
-- LAST n [SECOND/MINUTE/HOUR/DAY/MONTH/YEAR] : Query of the latest target time at the current time.
-- STORAGE FROM : Set a storage to search from.
-- FIELDS : Set fields to search from. List the fields using , (comma).
-- LIMIT n1 n2 : Set offset of data to pull.</pre></code> 
+-** prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:* **: LuceneQL search condition
+-**  LAST n [SECOND/MINUTE/HOUR/DAY/MONTH/YEAR] **: Query of the latest target time at the current time.
+-**  STORAGE FROM **: Set a storage to search from.
+-**  FIELDS **: Set fields to search from. List the fields using , (comma).
+-**  LIMIT n1 n2 **: Set offset of data to pull. 
 
 #### 2)	Data search from RDB source
 SeQL retrieves data from local and remote RDBs based on JDBC.
