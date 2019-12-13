@@ -792,13 +792,13 @@ AND prtc:TCP
 | FIELDS `src_ip`, dstn_ip, dstn_port, prtc 
 | LIMIT 0 10 
 | STATS COUNT(*) AS cnt,  DC(dstn_ip) AS dcnt, 
-        /* 그룹함수 SUM() 내에 논리함수 IF() 사용 예 */
+        /* Example of using logical function IF () in group function SUM () */
 	SUM(IF(prtc='TCP', 1, 0)) AS scnt, 
         SUM(IF(SUBSTR(prtc,0,1)='T', 1, 0)) AS scnt2, 
-        /* 숫자함수 ROUND() 내에 그룹함수 STDEV() 사용 예 */
+        /* Example of using group function STDEV () in numeric function ROUND () */
 	ROUND(STDEV(`no`), 2) AS rnd_std 
   BY prtc, dstn_port 
-# 날짜함수 DATE_FORMAT() 내에 날짜함수 NOW() 사용 예
+# Example of using date function NOW () in date function DATE_FORMAT ()
 | CONVERT DATE_FORMAT(NOW(), 'yyyyMMddHHmmss') AS NOW,
           TYPEOF(TODATE(NOW, 'yyyyMMddHHmmss')) AS now_type
 | PRINT scnt, scnt2, rnd_std, NOW, now_type;
