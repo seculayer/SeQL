@@ -323,7 +323,7 @@ AND prtc IN ('TCP', 'UDP')
 ### 4.7  Inner Join
 The table below shows an example of Inner Join where overlapping data is printed from two data sets on join key. 
 
-<img src="https://user-images.githubusercontent.com/58262527/70772454-ee276000-1db7-11ea-8a41-c67ba9947d7d.png" width="100%">
+<img src="https://user-images.githubusercontent.com/58262527/70772454-ee276000-1db7-11ea-8a41-c67ba9947d7d.png" width="70%">
 
 #### [ Grammar and example ]
 <pre><code>[ eqp_dt:[20190822150000 TO 20190822153000] 
