@@ -907,9 +907,9 @@ Dynamic Select refers to a search query that searches data using a single search
 - FILES_EXT(absolute path, file extension) prints the array of file names that match with the entered file extension string in the directory. null is printed if directory does not exist.
 
 ### 5.8  Operators
-- + is addition operator.
-- - is subtraction operator.
-- * is multiplication operator.
+- <pre>+</pre> is addition operator.
+- <pre>-</pre> is subtraction operator.
+- <pre>*</pre> is multiplication operator.
 - / is division operator.
 - % is remainder operator. 
 - value1 < value2 prints the result of true(1) when value1 is smaller than value2, otherwise false(0) 
