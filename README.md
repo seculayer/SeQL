@@ -717,8 +717,9 @@ TABLE.LOCAL[	  Spark-SQL search Query   ]
 
 
 # 5. SeQL Built-in Functions
-Dynamic Select refers to a search query that searches data using a single search query or performs join analysis between various data sources without loading the data into memory. Basic forms are given below examples.  
-5.1  Functions Related to Numbers
+Dynamic Select refers to a search query that searches data using a single search query or performs join analysis between various data sources without loading the data into memory. Basic forms are given below examples.
+  
+### 5.1  Functions Related to Numbers
 - ABS(number) prints the absolute value.
 - CEILING(number) prints the smallest number among integers bigger than the entered number.
 - FLOOR(number) prints the biggest number among integers smaller than the entered number. Decimals are omitted for positive numbers. This includes negative numbers but decimals.
@@ -758,7 +759,7 @@ Dynamic Select refers to a search query that searches data using a single search
 - POSITIVE(number) prints the entered number in positive number. If positive number is entered, it prints as entered.
 - EVAL(regexp) prints the result of the entered REGEXP operations (+, -, *, /, %). For e.g., EVAL(1+2), EVAL(in_pkt_cnt*8), EVAL(in_pkt_cnt*cnt), and EVAL((src_ip*2.0)/100).
 
-5.2  Functions Related to Strings 
+### 5.2  Functions Related to Strings 
 - CONCAT('string1',' string2',' string3',...) concatenates(merges) entered strings.
 - REPLACE('string','existing string','string to replace') replaces exsiting string to string to replace from the entered string.
 - REPLACE_ALL('string','regexp','string to replace') replaces strings that matches regexp to string to replace from the entered string. 
@@ -824,13 +825,13 @@ Dynamic Select refers to a search query that searches data using a single search
 - SPLIT(string, regexp) prints the arrays from the entered string separated by regexp. 
 - SPLIT(string, separator char, escape char) prints the arrays from the entered string separated by the entered separator char. Escape char is user-defined. For e.g., SPLIT('test|123', '|', '\\') 
 
-5.3  Functions Related to Logic
+### 5.3  Functions Related to Logic
 - IF(logical operation,true value,false value) prints the result of either true or false value of logical operation. 
 - IFNULL(value1,value2) prints value1 in default unless it is NULL.
 - ISNULL(value1) prints the result of true(1) when value1 is NULL, otherwise false(0).
 - ISNOTNULL(value) prints the result of true(1) when value is NOT NULL, otherwise false(0).
 
-5.4  Aggregate Functions
+### 5.4  Aggregate Functions
 - COUNT(field name) prints the counts of the rows. 
 - SUM(field name) prints the sum of field names.
 - AVG(field name) prints the average value of field names within each group. 
@@ -842,7 +843,7 @@ Dynamic Select refers to a search query that searches data using a single search
 - VALUES(field name) prints the list of unique string of group field values. For e.g., [field value 1, field value 2, field value 3, …] 
 - STDEV(field name) prints the standard deviation of field values.
 
-5.5  Functions Related to Dates
+### 5.5  Functions Related to Dates
 - NOW() prints the current date and time. 
 - SYSDATE() prints the current date and time.
 - DATE_ADD(date,INTERVAL,value) adds the value to the entered date. (value: YEAR, MONTH, DAY, HOUR, MINUTE and SECOND)
@@ -885,11 +886,11 @@ Dynamic Select refers to a search query that searches data using a single search
 - LAST_DAY(date) prints the last day of entered date.
 - LAST_DAY(string, date format) prints the last day of entered date in the form of entered date format.
 
-5.6  Functions Related to Data Types
+### 5.6  Functions Related to Data Types
 - CAST(field name, type) converts the value of field name to entered data type. Available data types are String, Long, Double, Float and Integer. For e.g., CAST(dstn_port, Integer). 
 - TYPEOF(field name) prints the data type of the entered field name. Available data types are String, Long, Double, Float and Integer.
 
-5.7  Functions Related to Files
+### 5.7  Functions Related to Files
 - FILE(absolute file path) prints the result of true(1) or false(0) for the existance of file
 - DIR(absolute file path) prints the result of true(1) or false(0) for the existance of directory.
 - DIRECTORY(absolute file path) prints the result of true(1) or false(0) for the existance of directory.
@@ -905,7 +906,7 @@ Dynamic Select refers to a search query that searches data using a single search
 - FILES_PREFIX(absolute path, string) prints the array of file names that begin with the entered string in the directory. null is printed if directory does not exist.
 - FILES_EXT(absolute path, file extension) prints the array of file names that match with the entered file extension string in the directory. null is printed if directory does not exist.
 
-5.8  Operators
+### 5.8  Operators
 - + is addition operator.
 - - is subtraction operator.
 - * is multiplication operator.
@@ -926,7 +927,7 @@ Dynamic Select refers to a search query that searches data using a single search
 - LIKE is LIKE operator
 - NOT LIKE is NOT LIKE operator. 
 
-5.9  Functions Related to Array
+### 5.9  Functions Related to Array
 - ARRAY(number1, number2, number3) prints the array of number 1, 2 and 3. 
 - TOARRAY(number1, number2, number3) prints the array of number 1, 2 and 3.
 - ARRAY_LENGTH(array) prints the size of the array. 
@@ -954,7 +955,7 @@ Dynamic Select refers to a search query that searches data using a single search
 - ARRAY_FIRST(array, regexp, IgnoreNull) prints the first value that matches regexp for the group of columns. Only non-null values are returned if isIgnoreNull is true
 - DISTINCT(value1, value2, ...) prints array with distinctive values from entered. 
 
-5.10  Calling External Functions 
+### 5.10  Calling External Functions 
 - JAVA_METHOD(class, method[, arg1[, arg2 ..]]) prints the result from calling method of Java class. 
 E.g. 1) calling functions without parameter: JAVA_METHOD('com.seculayer.seql.util.DateTime', 'getDateString')
 E.g. 2) calling functions with parameter: JAVA_METHOD('com.seculayer.seql.util.cipher.AES256', 'encrypt', 'ABC');
