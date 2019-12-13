@@ -713,11 +713,13 @@ TABLE.LOCAL[	  Spark-SQL search Query   ]
 | HEAD 10;</code></pre>
 
 
-### 4.24  SeQL 파일프로세싱 구문 예제
-SeQL은 기본적으로 메모리 기반위에서 데이터를 처리하여 빠른 성능을 제공한다. 그러나 메모리를 초과하는 대용량 데이터를 처리하기 위한 옵션을 별도로 제공한다.
-아래와 같이 SeQL 구문 상단에 @PROCESS_BY_FILE 선언을 해주면 Group-By, Sort, Filter, Join 등모든 쿼리 프로세싱을 파일 기반으로 처리한다.
-이때 내부적으로 사용하는 프로세싱 파일이 생성되는 경로는 /CloudESM/data/cache 디렉토리이며 사용자가 컨피그(/CloudESM/app/shovel_server/conf/shovel-server-conf.xml 설정 파일의 seql.file.cache.dir 항목 경로) 설정으로 변경 가능하다.
-자세한 사용 예제는 아래와 같다.
+### 4.24  SeQL File processing example
+SeQL basically provides fast performance by processing data on a memory basis. 
+However, it offers a separate option for handling large amounts of data beyond memory.
+If you declare @PROCESS_BY_FILE at the top of SeQL statement as below, all query(Group-By, Sort, Filter, Join) is processed based on file.
+At this time, the path to the processing file used internally is created in the /CloudESM/data/cache directory.
+the path can change in the configuration file(/CloudESM/app/shovel_server/conf/shovel-server-conf.xml).
+A detailed usage example is shown below.
 
 #### [ Grammar and example ]
 <pre><code>@PROCESS_BY_FILE
@@ -731,11 +733,11 @@ AND prtc:TCP
 | HEAD 10
 ;</code></pre>
 
-### 4.25  Parallel Query 예제
-1:N 형태의 다중 콜렉터 구조에서 병렬로 쿼리를 실행하기 위한 Parallel Query 기능을 지원하며아래와 같은 문법으로 사용한다.
-<pre><code>Grammar> CLUSTER.PARALLEL[   SeSQL 조회쿼리   ]</code></pre>
-"데이터를 옯기는 것이 아니라 계산결과를 옮기는 것"이 성능에 유리하다는 사상에 기초하여  CLUSTER.PARALLEL로 선언된 SeQL 구문을 1차적으로 콜렉터 서버의 검색엔진에서 처리하여 그 결과를 전송하면 Shovel 서버에서 모든 데이터를 취합하여 결과를 리턴하는 형태로 동작한다. 
-CLUSTER.PARALLEL 구문안에 파일 프로세싱을 위한 @PROCESS_BY_FILE 선언을 지원하며 CLUSTER.PARALLEL 구문 내에서는 검색/그룹검색->처리 형태의 구문은 사용가능하나 Join/Union/Search-Filter 등은 콜렉터 노드에서 의미가 없기 때문에 사용이 제한된다.
+### 4.25  Parallel Query example
+SeQL supports parallel query on 1: N type multiple collector structures. Use parallel query like this:
+<pre><code>Grammar> CLUSTER.PARALLEL[   SeSQL Query  ]</code></pre>
+Based on the idea that "moving calculation results rather than moving data" is beneficial to performance, the SeQL statements declared as CLUSTER.PARALLEL are processed by the collector server's search engine and transmitted to the Shovel server. It works by collecting all the data and returning the result.
+@PROCESS_BY_FILE declaration for file processing is supported in CLUSTER.PARALLEL statement. Within CLUSTER.PARALLEL statement, search / group search-> processing syntax is available, but Join / Union / Search-Filter is not meaningful at collector node. Therefore, use is limited.
 
 #### [ Grammar and example ]
 <pre><code>#-----------------------
