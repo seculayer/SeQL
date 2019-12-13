@@ -343,6 +343,8 @@ ON a.dstn_ip = b.src_ip
 
 ### 4.8  Outer Join
 The table below shows examples of Left, Right and Full Outer Join.
+
+<img src="https://user-images.githubusercontent.com/58262527/70774075-89bacf80-1dbc-11ea-9822-df3266298e59.png" width="40%">
  
 #### [ Grammar and example ]
 <pre><code>#-----------------------
