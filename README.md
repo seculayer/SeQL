@@ -42,7 +42,7 @@ Search engine data can be retrieved using LuceneQL, the search language of the e
 | LAST 5 MINUTE
 | STORAGE FROM RAW
 | FIELDS `key`, src_ip, dstn_ip, prtc 
-| LIMIT 0 100<code></pre>
+| LIMIT 0 100</code></pre>
 
 #### [ Description ]
 <pre><code>- prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:*: LuceneQL search condition
