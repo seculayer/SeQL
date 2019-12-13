@@ -38,14 +38,11 @@ SeQL consists of the structure of Data Search -> Data Processing-> Data Output P
 Search engine data can be retrieved using LuceneQL, the search language of the eyeCloudSIM search engine.
  
 #### [ Grammar and example ]
-<pre><code>
-prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:*
+<pre><code>prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:*
 | LAST 5 MINUTE
 | STORAGE FROM RAW
 | FIELDS `key`, src_ip, dstn_ip, prtc 
-| LIMIT 0 100
-<code></pre>
-
+| LIMIT 0 100<code></pre>
 #### [ Description ]
 - prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:* : LuceneQL search condition
 - LAST n [SECOND/MINUTE/HOUR/DAY/MONTH/YEAR] : Query of the latest target time at the current time.
