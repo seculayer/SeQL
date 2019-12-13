@@ -2,7 +2,7 @@
 
 
 ## 1. Overview
-<center><img src="https://user-images.githubusercontent.com/58262527/70760960-ccfe4980-1d8e-11ea-92d0-5fce99b6bdef.png" width="70%"></center>
+<center><img src="https://user-images.githubusercontent.com/58262527/70760960-ccfe4980-1d8e-11ea-92d0-5fce99b6bdef.png" width="300" height="100"></center>
 SeQL, abbreviated from Seculayer Query Language, is a query language developed by SecuLayer’s R&D center.
 SeQL supports search for heterogeneous data such as file, RDB and search data, and union and join analysis for homogeneous and heterogenous data. In addition, it has about 220 built-in functions including but not limited to characters, numbers, dates, logics, arrays and sets for data manipulation and supports various calculation functions. 
 
