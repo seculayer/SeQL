@@ -1,9 +1,12 @@
-1. Overview
- 
+# SeQL(Seculayer Query Language)
+--------------------------------------------------------------------------------
+
+## 1. Overview
+![SeQL](https://user-images.githubusercontent.com/58262527/70760960-ccfe4980-1d8e-11ea-92d0-5fce99b6bdef.png)
 SeQL, abbreviated from Seculayer Query Language, is a query language developed by SecuLayer’s R&D center.
 SeQL supports search for heterogeneous data such as file, RDB and search data, and union and join analysis for homogeneous and heterogenous data. In addition, it has about 220 built-in functions including but not limited to characters, numbers, dates, logics, arrays and sets for data manipulation and supports various calculation functions. 
 
-2. Understanding SeQL
+## 2. Understanding SeQL
 SeQL is installed and executed in ShovelServer process in the Analyzer of eyeCloudSIM as shown in the architecture below. Basically, SeQL can search the data stored in eyeCloudSIM and can search the internal and external RDB and file data.
  
 SeQL consists of the structure of Data Search -> Data Processing-> Data Output Printing. 
@@ -17,7 +20,7 @@ Various functions for data manipulation can be performed by using | (pipe), whic
 When an end-user requests a SeQL query, it operates in the form of query parsing -> query structure -> recursive processing as shown below.
  
 
-3. SeQL Basic Grammar
+## 3. SeQL Basic Grammar
 SeQL consists of the structure of Data Search -> Data Processing-> Data Output Printing. Data search is performed from eyeCloudSIM search engine data, DB data, file data and more. 
 
 3.1  Data Search
@@ -114,7 +117,11 @@ SeQL consists of the structure of Data Search -> Data Processing-> Data Output P
 - Line counting available using the statement of STATS COUNT(*) AS cnt BY ALL.
 - JOIN analysis among heterogeneous data sources is available. For e.g., File and DB, File and Search, DB and Search, and etc…)
 
-4. SeQL Usage Example
+
+
+
+
+## 4. SeQL Usage Example
 4.1  Basic Example
 The table below shows the basic example of data search, processing and output printing.
 [ Grammar and example ]
@@ -653,7 +660,11 @@ TABLE.LOCAL[
 | SORT total DESC
 | HEAD 10;
 
-5. SeQL Built-in Functions
+
+
+
+
+## 5. SeQL Built-in Functions
 Dynamic Select refers to a search query that searches data using a single search query or performs join analysis between various data sources without loading the data into memory. Basic forms are given below examples.  
 5.1  Functions Related to Numbers
 - ABS(number) prints the absolute value.
