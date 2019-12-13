@@ -403,6 +403,8 @@ ON a.dstn_ip = b.src_ip
 
 ### 4.9  Union
 The table below shows examples of combining two data sets using Union and Unial All.
+
+<img src="https://user-images.githubusercontent.com/58262527/70774193-da322d00-1dbc-11ea-90b0-ac9b29855ad3.png" width="90%">
  
 #### [ Grammar and example ]
 <pre><code>#-----------------------
