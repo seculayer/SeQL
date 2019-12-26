@@ -1044,6 +1044,6 @@ As shown in the above example, aggregate function can be used and nested use in 
 - DISTINCT(value1, value2, ...) prints array with distinctive values from entered. 
 
 ### 5.10  Calling External Functions 
-- JAVA_METHOD(class, method[, arg1[, arg2 ..]]) prints the result from calling method of Java class.
-E.g. 1) calling functions without parameter: JAVA_METHOD('com.seculayer.seql.util.DateTime', 'getDateString')
+- JAVA_METHOD(class, method[, arg1[, arg2 ..]]) prints the result from calling method of Java class.  
+E.g. 1) calling functions without parameter: JAVA_METHOD('com.seculayer.seql.util.DateTime', 'getDateString')  
 E.g. 2) calling functions with parameter: JAVA_METHOD('com.seculayer.seql.util.cipher.AES256', 'encrypt', 'ABC')
