@@ -956,6 +956,8 @@ As shown in the above example, aggregate function can be used and nested use in 
 - HOURSTR_DIFF(date1, date1 format, date2, date2 format) prints the hour difference between date1 and date2.
 - MIN_DIFF(date1, date2) prints the minute difference between date1 and date2. 
 - MINSTR_DIFF(date1, date1 format, date2, date2 format) prints the minute difference between date1 and date2.
+- SEC_DIFF(date1, date2) prints the second difference between date1 and date2. 
+- SECSTR_DIFF(date1, date1 format, date2, date2 format) prints the second difference between date1 and date2.
 - DATE() prints the current date in the form of yyyy-MM-DD.
 - TIME() prints the current time in the form of HH:mm:ss.
 - UNIX_TIMESTAMP() prints Unix Timestamp.
