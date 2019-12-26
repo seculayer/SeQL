@@ -156,9 +156,9 @@ SeQL commands can be combined and connected using the separator, | (pipe), and e
 The table below shows the basic example of data search, processing and output printing.
 
 #### [ Grammar and example ]
-<pre><code>> #---------------------------------------
-> # 1) Data Search
-> #---------------------------------------
+<pre><code>#---------------------------------------
+# 1) Data Search
+#---------------------------------------
 eqp_dt:[20190822150000 TO 20190822153000] 
 AND prtc:TCP
 # Set a storage to search from
