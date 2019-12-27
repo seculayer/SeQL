@@ -1,13 +1,13 @@
 # 1. Overview
 <img src="https://user-images.githubusercontent.com/58262527/70760960-ccfe4980-1d8e-11ea-92d0-5fce99b6bdef.png" width="70%">
 
-SeQL, abbreviated from Seculayer Query Language, is a query language developed by SecuLayer’s R&D center.
+SeQL, abbreviated from [Seculayer](http://www.seculayer.co.kr/en/) Query Language, is a query language developed by [Seculayer](http://www.seculayer.co.kr/en/)’s R&D center.
 SeQL supports search for heterogeneous data such as file, RDB and search data, and union and join analysis for homogeneous and heterogenous data. In addition, it has about 220 built-in functions including but not limited to characters, numbers, dates, logics, arrays and sets for data manipulation and supports various calculation functions. 
 
 
 
 # 2. Understanding SeQL
-SeQL is installed and executed in ShovelServer process in the Analyzer of [eyeCloudSIM](http://www.seculayer.co.kr/en/?c=117) as shown in the architecture below. Basically, SeQL can search the data stored in eyeCloudSIM and can search the internal and external RDB and file data.
+SeQL is installed and executed in ShovelServer process in the Analyzer of [eyeCloudSIM](http://www.seculayer.co.kr/en/?c=117) as shown in the architecture below. Basically, SeQL can search the data stored in [eyeCloudSIM](http://www.seculayer.co.kr/en/?c=117) and can search the internal and external RDB and file data.
 
 <img src="https://user-images.githubusercontent.com/58262527/70762374-a858a080-1d93-11ea-87ff-0cb571760186.png" width="70%">
 
@@ -31,11 +31,11 @@ When an end-user requests a SeQL query, it operates in the form of query parsing
  
 
 # 3. SeQL Basic Grammar
-SeQL consists of the structure of Data Search -> Data Processing-> Data Output Printing. Data search is performed from eyeCloudSIM search engine data, DB data, file data and more. 
+SeQL consists of the structure of Data Search -> Data Processing-> Data Output Printing. Data search is performed from [eyeCloudSIM](http://www.seculayer.co.kr/en/?c=117) search engine data, DB data, file data and more. 
 
 ### 3.1  Data Search
 #### 1)	Data search from search engine
-Search engine data can be retrieved using LuceneQL, the search language of the eyeCloudSIM search engine.
+Search engine data can be retrieved using LuceneQL, the search language of the [eyeCloudSIM](http://www.seculayer.co.kr/en/?c=117) search engine.
  
 #### [ Grammar and example ]
 <pre><code>prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:*
@@ -71,7 +71,7 @@ The ID of the RDB data source can be retrieved from the icon, “get data source
 To register a data source, click the "Add" button in the "get data source" popup window to register the JDBC driver information.
 
 #### 3)	File data source
-File data registered on eyeCloudSIM is retrieved for data search. 
+File data registered on [eyeCloudSIM](http://www.seculayer.co.kr/en/?c=117) is retrieved for data search. 
 
 #### [ Grammar and example ]
 <pre><code>FILE.file_01[
@@ -194,7 +194,7 @@ AND prtc:TCP
 | HEAD 10</code></pre>
 
 ### 4.2  Index Data Search
-The table below shows an example to search index data stored in eyeCloudSIM.
+The table below shows an example to search index data stored in [eyeCloudSIM](http://www.seculayer.co.kr/en/?c=117).
 
 #### [ Grammar and example ]
 <pre><code>#-----------------------
@@ -251,7 +251,7 @@ AND prtc:TCP AND (dstn_port:80 OR dstn_port:90) AND attack_nm:*
 
 ### 4.4  Sorting and Cutting Data
 The table below shows examples of SORT for sorting data, TOP/BOTTOM and HEAD/TAIL for cutting data, and LIMIT to bring data to where desired. 
-Basically, both TOP/BOTTOM and HEAD/TAIL are used to cut data from the beginning or the end, yet the purpose varies. TOP/BOTTOM is used to cut the data from eyeCloudSIM index data in search statements and HEAD/TAIL is used to cut the data while processing the data. 
+Basically, both TOP/BOTTOM and HEAD/TAIL are used to cut data from the beginning or the end, yet the purpose varies. TOP/BOTTOM is used to cut the data from [eyeCloudSIM](http://www.seculayer.co.kr/en/?c=117) index data in search statements and HEAD/TAIL is used to cut the data while processing the data. 
 
 #### [ Grammar and example ]
 <pre><code>eqp_dt:[20190722160000 TO 20190722163000] 
@@ -273,7 +273,7 @@ AND prtc:TCP
 | PRINT "source ip", len, concat</code></pre>
 
 ### 4.5  Search Filter
-Below shows an example of search filter for correlation analysis when searching for eyeCloudSIM index data. It is following the form of | SEARCH src_ip IN [SeQL].
+Below shows an example of search filter for correlation analysis when searching for [eyeCloudSIM](http://www.seculayer.co.kr/en/?c=117) index data. It is following the form of | SEARCH src_ip IN [SeQL].
 SeQL’s search result value is converted to the form of src_ip:(value1 value2 ...), then append this to the upper search condition. The max count for appending is 1000.
 
 #### [ Grammar and example ]
@@ -509,7 +509,7 @@ The table below shows an example of searching JSON File existing on the server.
 | PRINT dstn_ip, dcnt, cnt;</code></pre>
 
 ### 4.14  Searching RDB Data Source
-The table below shows an example of search using RDB data source registered on eyeCloudSIM.
+The table below shows an example of search using RDB data source registered on [eyeCloudSIM](http://www.seculayer.co.kr/en/?c=117).
 
 #### [ Grammar and example ]
 <pre><code>#-----------------------
@@ -537,7 +537,7 @@ RDB.db_01[
 | HEAD 3;</code></pre>
 
 ### 4.15  Searching File Data Source
-The table below shows an example of search using file data source registered on eyeCloudSIM.
+The table below shows an example of search using file data source registered on [eyeCloudSIM](http://www.seculayer.co.kr/en/?c=117).
 
 #### [ Grammar and example ]
 <pre><code>FILE.4[
