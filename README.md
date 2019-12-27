@@ -7,7 +7,7 @@ SeQL supports search for heterogeneous data such as file, RDB and search data, a
 
 
 # 2. Understanding SeQL
-SeQL is installed and executed in ShovelServer process in the Analyzer of eyeCloudSIM as shown in the architecture below. Basically, SeQL can search the data stored in eyeCloudSIM and can search the internal and external RDB and file data.
+SeQL is installed and executed in ShovelServer process in the Analyzer of [eyeCloudSIM](http://www.seculayer.co.kr/en/?c=117) as shown in the architecture below. Basically, SeQL can search the data stored in eyeCloudSIM and can search the internal and external RDB and file data.
 
 <img src="https://user-images.githubusercontent.com/58262527/70762374-a858a080-1d93-11ea-87ff-0cb571760186.png" width="70%">
 
