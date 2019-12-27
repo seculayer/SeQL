@@ -68,7 +68,7 @@ The ID of the RDB data source can be retrieved from the icon, “get data source
 
 <img src="https://user-images.githubusercontent.com/58262527/70769745-114d1200-1dae-11ea-8ec8-3c8ec954e6f9.png" width="90%">
  
-To register a data source, go to eyeCloudSIM System > System Data > Custom Tagging > Data Source Mgmt., then register JDBC driver's information.
+To register a data source, click the "Add" button in the "get data source" popup window to register the JDBC driver information.
 
 #### 3)	File data source
 File data registered on eyeCloudSIM is retrieved for data search. 
@@ -87,7 +87,7 @@ The ID of the File data source can be retrieved from the icon, “get file data�
 
 <img src="https://user-images.githubusercontent.com/58262527/70769871-84ef1f00-1dae-11ea-9c17-9618cc2fb971.png" width="90%">
 
-To register the file data source, go to eyeCloudSIM Statistics > Bigdata Analysis > File data Mgmt., then register local files. JSON, CSV and more file formats are supported. 
+To register a file data source, use the "Add" button in the "get file data" popup., then register local files. JSON, CSV and more file formats are supported. 
 
 #### 4)	JSON File Data Search
 JSON file that exists on the server can be loaded on SeQL. 
