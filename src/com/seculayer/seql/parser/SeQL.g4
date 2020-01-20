@@ -141,8 +141,14 @@ func_alias :
 	
 function
 	: funcNm=ID (LPAREN args=arguments? RPAREN)?
+	| LPAREN caseFunc=case_function RPAREN
+	| caseFunc=case_function
 	;
- 
+	
+case_function
+	: 'CASE' ('WHEN' op_eval_expr 'THEN' arg_expr)+ ('ELSE' elsVal=arg_expr)? 'END'
+	;
+	
 arguments
 	: arg_expr (COMMA arg_expr )*
 	;
@@ -238,8 +244,7 @@ pipe_output_print
 	: PRINT alias_name (COMMA alias_name)*
 	;
 pipe_output_file
-	: ftype=file_type (dquot=DQUOTE_PHRASE|squot=SQUOTE_PHRASE) sep=SEPARATOR_PHRASE? ('HEADER' '=' useHdr=BOOL)?
-	| ftype=file_type (dquot=DQUOTE_PHRASE|squot=SQUOTE_PHRASE) ('HEADER' '=' useHdr=BOOL)? sep=SEPARATOR_PHRASE? 
+	: ftype=file_type fopt=OUTPUT_FILE_OPT
 	;
 file_type :
 	(TOJSON|TOCSV|TOFILE)
@@ -247,6 +252,11 @@ file_type :
 pipe_output_db :
 	type1=SAVE_DB
 	| type2=SAVE_DB_QUERY
+	;
+
+OUTPUT_FILE_OPT :
+	DQUOTE_PHRASE WS SEPARATOR_PHRASE? (WS* 'HEADER' EQ BOOL)?
+	| DQUOTE_PHRASE WS ('HEADER' EQ BOOL)? (WS* SEPARATOR_PHRASE)?
 	;
 
 
@@ -513,10 +523,7 @@ GROUP_FUNC :
 	| 'GROUP_CONCAT' 
 	| 'STDEV' 
 	;
-ID	:
-	APOSTRO ID APOSTRO 
-	| (ID_CHAR|DOT)+
-	;
+ID	: (APOSTRO ID APOSTRO | ID_CHAR+);
 DQUOTE_PHRASE 
 	: DQUOTE (ESC_CHAR|~('"'|'\\'))+ DQUOTE
 	;
