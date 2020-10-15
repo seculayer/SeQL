@@ -1,7 +1,7 @@
 grammar SeQL;
 
 mainQ
-	: pipe_query SEMI?
+	: (proc=PROC_BY_FILE)? query=pipe_query SEMI?
 	;
 
 pipe_query
@@ -14,7 +14,13 @@ ds_query
 	| file=ds_file				#dsFile
 	| rdb=ds_rdb				#dsRdb
 	| join=join_clause			#dsJoin
+	| union=union_list			#dsUnion
 	| json=json_file			#dsJson
+	| tbl=ds_table				#dsTable
+	| parallel=cluster_parallel	#dsCluster
+	| show=show_reputations		#dsReputations
+	| show=show_reput			#dsReputGroup
+	| drop=drop_reput			#dsDropReput
 	;
 ds_file
 	:
@@ -24,21 +30,59 @@ ds_rdb
 	:
 	RDB_PHRASE
 	;
+ds_table
+	:
+	TABLE_PHRASE
+	;
 json_file
 	:
 	JSON_FILE (DQUOTE_PHRASE|SQUOTE_PHRASE)
 	;
 
 join_clause
-	: LBRACK left=pipe_query RBRACK (leftAlias=ID)? 
-	  joinType=join_type LBRACK right=pipe_query RBRACK (rightAlias=ID)? 
-	  (ON expr=op_eval_expr)?
+	: LBRACK left=pipe_query RBRACK leftAlias=ID
+	  joinType=join_type LBRACK right=pipe_query RBRACK rightAlias=ID 
+	  ON expr=op_eval_expr
+	;
+
+union_list
+	:
+	union_clause+
+	;
+
+union_clause
+	:  
+	  joinType=union_type? LBRACK right=pipe_query RBRACK
 	;
 
 join_type
 	:
-	JOIN_DIRECTION? JOIN_TYPE
-	| UNION_TYPE 
+	JOIN_DIRECTION? JOIN_TYPE 
+	;
+
+union_type
+	:
+	UNION_TYPE
+	;
+	
+cluster_parallel
+	:
+	CLUSTER_PARALLEL LBRACK (proc=PROC_BY_FILE)? query=pipe_query RBRACK
+	;
+	
+show_reputations
+	:
+	SHOW_REPUTATIONS
+	;
+	
+show_reput
+	:
+	SHOW_REPUTATION table=ID (PIPE filter=pipe_proc_filter)* (PIPE limit=pipe_proc_limit)?
+	;
+	
+drop_reput
+	:
+	DROP_REPUTATION table=ID
 	;
 
 
@@ -47,23 +91,29 @@ join_type
 **--------------------------**/    
 pipe_search_group
 	:
-	searchClause (PIPE pipe_search)*
+	searchClause (PIPE pipe_search)* (PIPE pipe_search_limit)?
+	| searchClause (PIPE pipe_group_search)*
 	;
 pipe_search
     : pipe_search_time
     | pipe_search_in_clause
     | pipe_search_storage
-    | pipe_search_groupby
     | pipe_search_fields
     | pipe_search_sort
+//    | pipe_search_limit
+    ;
+pipe_group_search
+    : pipe_search_time
+    | pipe_search_in_clause
+    | pipe_search_storage
+    | pipe_search_groupby
     | pipe_search_top_bottom
-    | pipe_search_limit
     ;
 pipe_search_time
 	: LAST span=eval_expr timeType=TIME_TYPE
 	;
 pipe_search_in_clause :
-	SEARCH id=ID inNot=in_notin LBRACK query=pipe_query RBRACK
+	SEARCH id=join_id inNot=in_notin LBRACK query=pipe_query RBRACK
 	;
 pipe_search_storage
 	: STORAGE FROM storage=ID
@@ -75,23 +125,33 @@ pipe_search_fields
     : FIELDS idList=id_list
     ;
 id_list :
-	ID (COMMA ID)*
+	ids (COMMA ids)*
 	;
+ids :
+	ID
+	| ID COLON ('avg'|'sum'|'max'|'min'|UINT)
+	| APOSTRO ids APOSTRO
+	;
+	
 pipe_search_sort
     : SORT sort_clause (COMMA sort_clause)*
     ;
 pipe_search_top_bottom
-    : topBot=top_bottom evExpr=NUMBER
+    : topBot=top_bottom evExpr=UINT
     ;
 pipe_search_limit
-    : LIMIT expr1=NUMBER expr2=NUMBER
+    : limitType=LIMIT expr1=UINT expr2=UINT
+    | limitType=UNLIMIT
     ;
     
 sort_clause
 	: sid=alias_name sort=ASC_DES
 	;
 top_bottom
-	: (HEAD|TAIL|TOP|BOTTOM)
+	: (TOP|BOTTOM)
+	;
+head_tail
+	: (HEAD|TAIL)
 	;
 
 /**--------------------------
@@ -111,6 +171,8 @@ pipe_proc
     | pipe_output_print
     | pipe_output_file
     | pipe_output_db
+    | pipe_output_table
+    | pipe_output_reput
     ;
 //--------------------------
 // Statistic statement
@@ -140,9 +202,17 @@ func_alias :
 	;
 	
 function
-	: funcNm=ID (LPAREN args=arguments? RPAREN)?
+	: funcNm=functionName (LPAREN args=arguments? RPAREN)?
 	| LPAREN caseFunc=case_function RPAREN
 	| caseFunc=case_function
+	| text=SQUOTE_PHRASE
+	;
+	
+functionName
+	:
+	ID
+	| TIME_TYPE
+	| ID DOT ID
 	;
 	
 case_function
@@ -157,11 +227,11 @@ arg_expr
 	: left=arg_expr op=OPER right=arg_expr	#argOper
 	| left=arg_expr op=AND right=arg_expr	#argAnd
 	| left=arg_expr op=OR right=arg_expr	#argOr
+//	| LPAREN expr=arg_expr RPAREN           #argParen
 	| bool=BOOL								#argBool
 	| text=SQUOTE_PHRASE					#argText
-	| number=NUMBER							#argNumber
-	| id=ID									#argId
-//	| id=APOSTRO_PHRASE						#argApostorId
+	| number=numeric						#argNumber
+	| id=join_id							#argId
 	| func=stats_function					#argStatFunc
 	| func=function							#argFunc
 	| eval=eval_expr						#argEval
@@ -173,25 +243,36 @@ op_eval_expr :
 	| left=eval_expr op=OR right=eval_expr		#opEvalOr
 	| LPAREN expr=op_eval_expr RPAREN           #opParen
     | left=eval_expr							#opEval
+	| left=op_eval_expr op=AND right=eval_expr	#opEvalExprAnd
+	| left=op_eval_expr op=OR right=eval_expr	#opEvalExprOr
     ;
  
 eval_expr  : 
-	left=eval_expr op=CALC right=eval_expr 		#evalCalc
+	left=eval_expr op=mathOp right=eval_expr 	#evalCalc
 	| left=eval_expr op=OPER right=eval_expr	#evalOper
-//	| left=eval_expr op=AND right=eval_expr		#evalAnd
-//	| left=eval_expr op=OR right=eval_expr		#evalOr
     | LPAREN eval_expr RPAREN                   #evalParen
-    | number=NUMBER                    			#evalAtomr
-    | id=ID                           			#evalId
-//    | id=APOSTRO_PHRASE							#evalApostorId
+    | trunc=truncated							#evalTrunc
+    | number=numeric                   			#evalAtomr
+//    | id=ID                           			#evalId
+    | id=join_id                           		#evalId
     | text=SQUOTE_PHRASE               			#evalText
     | text=DQUOTE_PHRASE               			#evalDquoteText
+    | func=function		               			#evalFunction
     ;
-    
+
+join_id :
+	ID '.' ID
+	| ID
+	;
+
 alias_name :
-	ID
+	join_id
 	| DQUOTE_PHRASE
 	;
+	
+mathOp:
+  (PLUS | MINUS | STAR | SLASH | PER)
+  ;
 	
 //--------------------------
 // Filter statement
@@ -206,11 +287,14 @@ filter_logical :
     | left=filter_logical fOper=OPER right=filter_logical			#filterOper
 	| left=filter_logical op=AND right=filter_logical				#filterAnd
 	| left=filter_logical op=OR  right=filter_logical				#filterOR
+    | left=eval_expr BETWEEN from=eval_expr AND to=eval_expr		#filterBetween
+    | left=eval_expr REGEXP right=eval_expr							#filterRegexp
     | left=eval_expr fOper=like_oper right=eval_expr				#filterLikeOper
     | left=eval_expr fOper=null_oper								#filterNullOper
     | left=eval_expr inNot=in_notin LBRACK query=pipe_query RBRACK	#filterInSearch
 	| left=eval_expr inNot=in_notin LPAREN exprs=expr_list RPAREN	#filterInClause
     | left=eval_expr												#filterSingle
+//    | left=function												#filterFunction
 	;
 expr_list :
 	eval_expr (COMMA eval_expr)*
@@ -231,10 +315,10 @@ pipe_proc_sort
 	: SORT sort_clause (COMMA sort_clause)*
 	;
 pipe_proc_limit
-	: LIMIT expr1=NUMBER expr2=NUMBER
+	: LIMIT expr1=UINT expr2=UINT
 	;
 pipe_proc_head_tail
-	: topBot=top_bottom evExpr=NUMBER
+	: topBot=head_tail evExpr=UINT
 	;
 
 /**--------------------------
@@ -244,22 +328,42 @@ pipe_output_print
 	: PRINT alias_name (COMMA alias_name)*
 	;
 pipe_output_file
-	: ftype=file_type fopt=OUTPUT_FILE_OPT
-	;
-file_type :
-	(TOJSON|TOCSV|TOFILE)
+	: fopt=OUTPUT_FILE_OPT (rewrite=REWRITE)?
 	;
 pipe_output_db :
 	type1=SAVE_DB
 	| type2=SAVE_DB_QUERY
 	;
-
-OUTPUT_FILE_OPT :
-	DQUOTE_PHRASE
-	| DQUOTE_PHRASE WS SEPARATOR_PHRASE? (WS* 'HEADER' EQ BOOL)?
-	| DQUOTE_PHRASE WS ('HEADER' EQ BOOL)? (WS* SEPARATOR_PHRASE)?
+pipe_output_table 
+	: table=OUTPUT_TABLE (rewrite=REWRITE)?
+	;
+pipe_output_reput 
+	: reput=OUTPUT_REPUT
 	;
 
+FILE_TYPE :
+	(TOJSON|TOCSV|TOFILE)
+	;
+//OUTPUT_FILE_OPT :
+//	DQUOTE_PHRASE WS SEPARATOR_PHRASE? (WS* 'HEADER' EQ BOOL)?
+//	| DQUOTE_PHRASE WS ('HEADER' EQ BOOL)? (WS* SEPARATOR_PHRASE)?
+//	;
+OUTPUT_FILE_OPT :
+	FILE_TYPE WS DQUOTE_PHRASE (WS SEPARATOR_PHRASE)? (WS 'HEADER' EQ BOOL)?
+	| FILE_TYPE WS DQUOTE_PHRASE (WS 'HEADER' EQ BOOL)? (WS SEPARATOR_PHRASE)?
+	;
+	
+OUTPUT_TABLE :
+	'TOTABLE' WS 'tableName' WS? EQ WS? ID
+	;
+	
+OUTPUT_REPUT :
+	'TOREPUT' WS 'tableName' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'KEY' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'keepTime' WS? EQ WS? ID WS TIME_TYPE
+	;
+
+REWRITE :
+	'REWRITE' WS? EQ WS? BOOL
+	;
 
 /* ================================================================
  * =                     LuceneQL                                 =
@@ -291,7 +395,7 @@ clauseGroup
 atom
   :
   modifier? mfld=field mval=multi_value term_modifier?
-  | modifier? fld=field val=value term_modifier?
+  | modifier? fld=field? val=value term_modifier?
   ;
   
 //SYSVAR(BLACK_IP)
@@ -349,12 +453,16 @@ multi_value
 normal
   :
   ID
-  | NUMBER
+  | numeric
   ;
 
 truncated
   :
   TERM_TRUNCATED
+
+//	(STAR|QMARK) (TERM_CHAR+ (QMARK|STAR))+ (TERM_CHAR)*
+//	| TERM_START_CHAR (TERM_CHAR* (QMARK|STAR))+ (TERM_CHAR)*
+//	| (STAR|QMARK) TERM_CHAR+
   ;
 
 quoted  :
@@ -377,12 +485,12 @@ term_modifier :
 
 boost :
   (CARAT) // set the default value
-  (NUMBER)? //replace the default with user input
+  (numeric)? //replace the default with user input
   ;
 
 fuzzy :
   (TILDE) // set the default value
-  (NUMBER)? //replace the default with user input
+  (numeric)? //replace the default with user input
   ;
 
 not_  :
@@ -411,6 +519,13 @@ ip_type :
 ip_v4
 	: IPV4
 	;
+	
+numeric :
+	MINUS UINT '.' UINT
+	| UINT '.' UINT
+	| MINUS UINT
+	| UINT
+	;
 
 
 /* ================================================================
@@ -418,28 +533,17 @@ ip_v4
  * ================================================================
  */
 fragment INT		: '0' .. '9';
-fragment ID_CHAR	: ('a' .. 'z' | 'A' .. 'Z' | INT | '_' | DOT);
+fragment ID_CHAR	: ('a' .. 'z' | 'A' .. 'Z' | INT | '_');
 fragment CHAR   	: ('a' .. 'z' | 'A' .. 'Z');
 fragment IP_CHAR    : ('a' .. 'f' | 'A' .. 'F');
 fragment ESC_CHAR	:  '\\' .;
 fragment EQ			: '=';
 fragment NEQ		: '!=';
 fragment LESS		: '<';
-fragment LESS_EQ	: '=<';
+fragment LESS_EQ	: '<=';
 fragment GREATER	: '>';
 fragment GREATER_EQ	: '>=';
-fragment TERM_CHAR 	: (TERM_START_CHAR | '-' | '+');
-fragment TERM_START_CHAR
-	: (~(' ' | '\t' | '\n' | '\r' | '\u3000'
-        | '"'
-        | '(' | ')' | '[' | ']' | '{' | '}'
-        | '+' | '-' | '!' | ':' | '~' | '^'
-        | '?' | '*' | '\\'
-        )
-   | ESC_CHAR );
 
-FILE_ID : FILE DOT ID;
-RDB_ID  : RDB DOT ID;
 DOT		: '.';
 PIPE    : '|';
 SQUOTE  : '\'';
@@ -462,6 +566,8 @@ SLASH   : '/';
 PER     : '%' ;
 CARAT   : '^' (INT+ ('.' INT+)?)?;
 TILDE   : '~' (INT+ ('.' INT+)?)?;
+BETWEEN : 'BETWEEN' ;
+REGEXP  : 'REGEXP' ;
 AND     : 'AND' ;
 OR      : 'OR';
 NOT     : 'NOT';
@@ -474,8 +580,8 @@ FROM    : 'FROM';
 GROUP   : 'GROUP';
 BY      : 'BY';
 FIELDS  : 'FIELDS';
-JSON_FILE    : 'JSON' WS FILE;
-FILE    : 'FILE';
+JSON_FILE    : 'JSON' WS 'FILE';
+//FILE    : 'FILE';
 RDB     : 'RDB';
 LOCAL   : 'LOCAL';
 SORT    : 'SORT';
@@ -484,6 +590,7 @@ BOTTOM  : 'BOTTOM';
 HEAD    : 'HEAD';
 TAIL    : 'TAIL';
 LIMIT   : 'LIMIT';
+UNLIMIT   : 'UNLIMIT';
 STATS   : 'STATS';
 IS      : 'IS';
 LIKE    : 'LIKE';
@@ -507,12 +614,13 @@ JOIN_TYPE
 JOIN_DIRECTION	: ('LEFT'|'RIGHT'|'FULL');
 UNION_TYPE		: 'UNION' (WS 'ALL')?;
 BOOL			: ('true'|'false'|'TRUE'|'FALSE');
-TIME_TYPE 		: ('SECOND'|'MINUTE'|'HOUR'|'DAY'|'MONTH'|'YEAR');
+TIME_TYPE 		: ('SECONDS'|'MINUTE'|'HOUR'|'DAY'|'MONTH'|'YEAR');
 OPER			: (EQ | NEQ | LESS | LESS_EQ | GREATER | GREATER_EQ);
-CALC			: (PLUS | MINUS | STAR | SLASH | PER);
-NUMBER
-	: MINUS? INT+ (DOT INT+)?
-	;
+//CALC			: (PLUS | MINUS | STAR | SLASH | PER);
+UINT : INT+;
+//NUMBER
+//	: MINUS? INT+ (DOT INT+)?
+//	;
 GROUP_FUNC :
 	'COUNT'
 	| 'MAX' 
@@ -529,7 +637,7 @@ DQUOTE_PHRASE
 	: DQUOTE (ESC_CHAR|~('"'|'\\'))+ DQUOTE
 	;
 SQUOTE_PHRASE
-	: SQUOTE (ESC_CHAR|~('\''|'\\'))+ SQUOTE
+	: SQUOTE (ESC_CHAR|~('\''|'\\'))* SQUOTE
 	;
 SAVE_DB_QUERY :
 	TODB WS 'dbId' WS? EQ WS? ID WS 'queryStr' WS? EQ WS? LBRACK (ESC_CHAR|~('['|']'|'\\'))+ RBRACK
@@ -541,28 +649,60 @@ SEPARATOR_PHRASE :
 	SEPARATOR WS* EQ WS* DQUOTE_PHRASE
 	;
 FILE_PHRASE
-	: FILE DOT ID WS* LBRACK WS* '*:*' WS* RBRACK
+	: 'FILE' DOT ID WS* LBRACK WS* '*:*' WS* RBRACK
 	;
 RDB_PHRASE
 	: RDB DOT ID WS* LBRACK (ESC_CHAR|~('['|']'|'\\'))+ RBRACK
+	;
+TABLE_PHRASE
+	: 'TABLE' DOT 'LOCAL' WS* LBRACK (ESC_CHAR|~('['|']'|'\\'))+ RBRACK
 	;
 REGEX
 	: SLASH (ESC_CHAR|~('/'|'\\'))+ SLASH
 	;
 IPV4 :
-	INT+ '.' INT+ '.' INT+ '.' INT+ (SLASH INT+)?
+	UINT '.' UINT '.' UINT '.' UINT (SLASH UINT)?
+	;
+PROC_BY_FILE
+	:
+	'@PROCESS_BY_FILE'
+	;
+CLUSTER_PARALLEL
+	:
+	'CLUSTER' DOT 'PARALLEL'
+	;
+SHOW_REPUTATIONS
+	:
+	'SHOW' WS 'REPUTATIONS'
+	;
+SHOW_REPUTATION
+	:
+	'SHOW' WS 'REPUTATION' WS
+	;
+DROP_REPUTATION
+	:
+	'DROP' WS 'REPUTATION' WS
 	;
 //IPV6 :
 //	(IPv6_CHAR|COLON)+ (SLASH INT+)?
 //	;
-HEXDIG
- : INT
- | IP_CHAR
- ;
+//HEXDIG
+// : INT
+// | IP_CHAR
+// ;
 TERM_TRUNCATED:
 	(STAR|QMARK) (TERM_CHAR+ (QMARK|STAR))+ (TERM_CHAR)*
 	| TERM_START_CHAR (TERM_CHAR* (QMARK|STAR))+ (TERM_CHAR)*
 	| (STAR|QMARK) TERM_CHAR+
   ;
+TERM_CHAR 	: (TERM_START_CHAR | '-' | '+');
+TERM_START_CHAR
+	: (~(' ' | '\t' | '\n' | '\r' | '\u3000'
+        | '"'
+        | '(' | ')' | '[' | ']' | '{' | '}'
+        | '+' | '-' | '!' | ':' | '~' | '^'
+        | '?' | '*' | '\\'
+        )
+   | ESC_CHAR );
 
 WS: [ \t\r\n]+ -> skip;
