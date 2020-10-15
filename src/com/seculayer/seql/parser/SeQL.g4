@@ -19,8 +19,11 @@ ds_query
 	| tbl=ds_table				#dsTable
 	| parallel=cluster_parallel	#dsCluster
 	| show=show_reputations		#dsReputations
-	| show=show_reput			#dsReputGroup
+	| show=show_reput			#dsShowReput
 	| drop=drop_reput			#dsDropReput
+	| show=show_lookups			#dsLookups
+	| show=show_lookup			#dsShowLookup
+	| drop=drop_lookup			#dsDropLookup
 	;
 ds_file
 	:
@@ -83,6 +86,21 @@ show_reput
 drop_reput
 	:
 	DROP_REPUTATION table=ID
+	;
+	
+show_lookups
+	:
+	SHOW_LOOKUPS
+	;
+	
+show_lookup
+	:
+	SHOW_LOOKUP table=ID (PIPE filter=pipe_proc_filter)* (PIPE limit=pipe_proc_limit)?
+	;
+	
+drop_lookup
+	:
+	DROP_LOOKUP table=ID
 	;
 
 
@@ -173,6 +191,7 @@ pipe_proc
     | pipe_output_db
     | pipe_output_table
     | pipe_output_reput
+    | pipe_output_lookup
     ;
 //--------------------------
 // Statistic statement
@@ -338,7 +357,10 @@ pipe_output_table
 	: table=OUTPUT_TABLE (rewrite=REWRITE)?
 	;
 pipe_output_reput 
-	: reput=OUTPUT_REPUT
+	: reput=(OUTPUT_REPUT|OUTPUT_REPUT_ALIAS)
+	;
+pipe_output_lookup 
+	: lookup=(OUTPUT_LOOKUP|OUTPUT_LOOKUP_ALIAS)
 	;
 
 FILE_TYPE :
@@ -359,6 +381,18 @@ OUTPUT_TABLE :
 	
 OUTPUT_REPUT :
 	'TOREPUT' WS 'tableName' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'KEY' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'keepTime' WS? EQ WS? ID WS TIME_TYPE
+	;
+	
+OUTPUT_REPUT_ALIAS :
+	'TOREPUT' WS 'tableName' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'tableAlias' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'KEY' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'keepTime' WS? EQ WS? ID WS TIME_TYPE
+	;
+	
+OUTPUT_LOOKUP :
+	'TOLOOKUP' WS 'tableName' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'KEY' WS? EQ WS? ID
+	;
+	
+OUTPUT_LOOKUP_ALIAS :
+	'TOLOOKUP' WS 'tableName' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'tableAlias' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'KEY' WS? EQ WS? ID
 	;
 
 REWRITE :
@@ -410,7 +444,7 @@ systemList
   
 field
   :
-  ID COLON
+  FIELD
   ;
 
 value
@@ -514,10 +548,13 @@ or_   :
 
 ip_type :
 	ip_v4 
-//	| ip_v6
+	| ip_v6
 	;
 ip_v4
 	: IPV4
+	;
+ip_v6
+	: IPV6
 	;
 	
 numeric :
@@ -633,6 +670,7 @@ GROUP_FUNC :
 	| 'STDEV' 
 	;
 ID	: (APOSTRO ID APOSTRO | ID_CHAR+);
+FIELD : (ID | STAR) COLON;
 DQUOTE_PHRASE 
 	: DQUOTE (ESC_CHAR|~('"'|'\\'))+ DQUOTE
 	;
@@ -683,9 +721,21 @@ DROP_REPUTATION
 	:
 	'DROP' WS 'REPUTATION' WS
 	;
-//IPV6 :
-//	(IPv6_CHAR|COLON)+ (SLASH INT+)?
-//	;
+SHOW_LOOKUPS
+	:
+	'SHOW' WS 'LOOKUP_TABLES'
+	;
+SHOW_LOOKUP
+	:
+	'SHOW' WS 'LOOKUP_TABLE' WS
+	;
+DROP_LOOKUP
+	:
+	'DROP' WS 'LOOKUP_TABLE' WS
+	;
+IPV6 :
+	ESC_CHAR? (CHAR|COLON|INT) (ESC_CHAR|CHAR|COLON|INT)+ (SLASH INT+)?
+	;
 //HEXDIG
 // : INT
 // | IP_CHAR
