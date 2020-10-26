@@ -147,10 +147,15 @@ id_list :
 	;
 ids :
 	ID
-	| ID COLON ('avg'|'sum'|'max'|'min'|UINT)
-	| APOSTRO ids APOSTRO
+//	| ID COLON ('avg'|'sum'|'max'|'min'|UINT) 
+//	| APOSTRO ids APOSTRO
+	| gid=group_id
 	;
-	
+
+group_id :
+	groupFunc=('SUBSTR' | GROUP_FUNC) LPAREN id=ID (COMMA num=UINT)? RPAREN 
+	;
+
 pipe_search_sort
     : SORT sort_clause (COMMA sort_clause)*
     ;
@@ -161,7 +166,7 @@ pipe_search_limit
     : limitType=LIMIT expr1=UINT expr2=UINT
     | limitType=UNLIMIT
     ;
-    
+
 sort_clause
 	: sid=alias_name sort=ASC_DES
 	;
@@ -380,11 +385,15 @@ OUTPUT_TABLE :
 	;
 	
 OUTPUT_REPUT :
-	'TOREPUT' WS 'tableName' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'KEY' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'keepTime' WS? EQ WS? ID WS TIME_TYPE
+	'TOREPUT' WS 'tableName' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'KEY' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS KEEP_TIME
 	;
 	
 OUTPUT_REPUT_ALIAS :
-	'TOREPUT' WS 'tableName' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'tableAlias' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'KEY' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'keepTime' WS? EQ WS? ID WS TIME_TYPE
+	'TOREPUT' WS 'tableName' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'tableAlias' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS 'KEY' WS? EQ WS? (DQUOTE_PHRASE|SQUOTE_PHRASE) WS KEEP_TIME
+	;
+	
+KEEP_TIME :
+	'keepTime' WS? EQ WS? (SPAN WS)? UINT WS TIME_TYPE (WS ONCE)?
 	;
 	
 OUTPUT_LOOKUP :
@@ -643,6 +652,8 @@ TODB    : 'TODB';
 TO      : 'TO';
 NULL    : 'NULL';
 SEPARATOR : 'SEPARATOR';
+SPAN    : 'SPAN';
+ONCE    : 'ONCE';
 
 JOIN_TYPE 
 	: 'INNER' WS 'JOIN'
@@ -651,7 +662,7 @@ JOIN_TYPE
 JOIN_DIRECTION	: ('LEFT'|'RIGHT'|'FULL');
 UNION_TYPE		: 'UNION' (WS 'ALL')?;
 BOOL			: ('true'|'false'|'TRUE'|'FALSE');
-TIME_TYPE 		: ('SECONDS'|'MINUTE'|'HOUR'|'DAY'|'MONTH'|'YEAR');
+TIME_TYPE 		: ('SECOND'|'MINUTE'|'HOUR'|'DAY'|'MONTH'|'YEAR');
 OPER			: (EQ | NEQ | LESS | LESS_EQ | GREATER | GREATER_EQ);
 //CALC			: (PLUS | MINUS | STAR | SLASH | PER);
 UINT : INT+;
